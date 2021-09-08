@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @ORM\Entity(repositoryClass=App\Repository\BookRepository::class)
  * @ORM\Table(name="book")
- * 
  */
 class Book
 {
@@ -39,9 +40,10 @@ class Book
     private $releaseDate;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\ManyToOne(targetEntity="PublishingCompany")
+     * @ORM\Column(type="integer")
      */
-    private $publishingCompany;
+    private $publishingCompanyId;
 
     public function getId(): ?int
     {
@@ -96,25 +98,27 @@ class Book
         return $this;
     }
 
+    public function getPublishingCompanyId(): ?int
+    {
+        return $this->publishingCompanyId;
+    }
+
+    public function setPublishingCompanyId(int $publishingCompanyId): self
+    {
+        $this->publishingCompanyId = $publishingCompanyId;
+
+        return $this;
+    }
+
     public function setObject($object): self
     {
         $this->setBookTitle($object->getBookTitle());
         $this->setBookAuthor($object->getBookAuthor());
         $this->setQuantityPages($object->getQuantityPages());
         $this->setReleaseDate($object->getReleaseDate());
+        $this->setPublishingCompanyId($object->getPublishingCompanyId());
 
         return $this;
     }
 
-    public function getPublishingCompany(): ?string
-    {
-        return $this->publishingCompany;
-    }
-
-    public function setPublishingCompany(string $publishingCompany): self
-    {
-        $this->publishingCompany = $publishingCompany;
-
-        return $this;
-    }
 }

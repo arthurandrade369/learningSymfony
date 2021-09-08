@@ -17,10 +17,9 @@ class BookController extends AbstractController
 {
 
     /**
-     *
      * @Route("", name="list", methods={"GET"}) 
      */
-    public function booksList(): Response
+    public function listBooks(): Response
     {
         try {
             $em = $this->getDoctrine()->getManager();
@@ -35,10 +34,9 @@ class BookController extends AbstractController
     }
 
     /**
-     * 
      * @Route("/{bookId}", name="show", methods={"GET"})
      */
-    public function bookShow($bookId)
+    public function showBook($bookId)
     {
         $book = $this->getDoctrine()->getRepository(Book::class)->find($bookId);
 
@@ -46,7 +44,6 @@ class BookController extends AbstractController
     }
 
     /**
-     * 
      * @Route("/", name="create", methods={"POST"})
      */
     public function createBook(Request $request)
@@ -62,6 +59,7 @@ class BookController extends AbstractController
             $book->setBookAuthor($data['author']);
             $book->setQuantityPages($data['quantity_pages']);
             $book->setReleaseDate(new DateTime(($data['release_date'])));
+            $book->setPublishingCompanyId($data['publishing_company']);
 
             $em->persist($book);
             $em->flush();
@@ -73,7 +71,6 @@ class BookController extends AbstractController
     }
 
     /**
-     * 
      * @Route("/{bookId}", name="update", methods={"PUT"})
      */
     public function updateBook($bookId, Request $request)
@@ -93,6 +90,8 @@ class BookController extends AbstractController
                 $book->setQuantityPages($data['quantity_pages']);
             if ($request->request->has('release_date'))
                 $book->setReleaseDate(new DateTime($data['release_date']));
+            if($request->request->has('publishing_company'))
+                $book->setPublishingCompanyId($data['publishing_company']);
 
             $em = $doctrine->getManager();
             $em->flush();
@@ -104,9 +103,7 @@ class BookController extends AbstractController
     }
 
     /**
-     * 
      * @Route("/{bookId}", name="delete", methods={"DELETE"})
-     * @return void
      */
     public function deleteBook($bookId)
     {
