@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Book;
+use App\Repository\BookRepository;
 use DateTime;
 use Exception;
 
@@ -19,17 +20,22 @@ class BookController extends AbstractController
     /**
      * @Route("", name="list", methods={"GET"}) 
      */
-    public function listBooks(): Response
+    public function listBooks(Request $request): Response
     {
         try {
+            //Pegando os valores do banco de dados
             $em = $this->getDoctrine()->getManager();
-            $book = $em->getRepository(Book::class)->findAll();
+            
+            $repo = $em->getRepository(Book::class);
+            if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
 
+            $book = $repo->findAllWithJoin();
+            
             return $this->json([
                 "data" => $book,
             ]);
         } catch (Exception $exception) {
-            return new Response('Error: ' . $exception);
+            return $this->exceptionResponse( $request, $exception);
         }
     }
 

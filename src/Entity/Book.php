@@ -2,12 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\BookRepository;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
 
 /**
- * @ORM\Entity(repositoryClass=App\Repository\BookRepository::class)
+ * @ORM\Entity(repositoryClass=BookRepository::class)
  * @ORM\Table(name="book")
  */
 class Book
