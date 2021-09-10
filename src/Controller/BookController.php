@@ -31,9 +31,7 @@ class BookController extends AbstractController
 
             $book = $repo->findAllWithJoin();
             
-            return $this->json([
-                "data" => $book,
-            ]);
+            return $this->json($book);
         } catch (Exception $exception) {
             return $this->exceptionResponse( $request, $exception);
         }

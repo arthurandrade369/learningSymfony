@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BookRepository;
+use App\Entity\PublishingCompany;
 
 /**
  * @ORM\Entity(repositoryClass=BookRepository::class)
@@ -38,7 +40,7 @@ class Book
     private $releaseDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="PublishingCompany")
+     * @ORM\ManyToOne(targetEntity="PublishingCompany", inversedBy="id")
      * @ORM\Column(type="integer")
      */
     private $publishingCompanyId;

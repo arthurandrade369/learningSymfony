@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\PublishingCompanyRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PublishingCompanyRepository;
+use App\Entity\Book;
 
 /**
- * @ORM\Entity(repositoryClass=App\Repository\PublishingCompanyRepository::class)
+ * @ORM\Entity(repositoryClass=PublishingCompanyRepository::class)
  * @ORM\Table(name="publishing_company")
  */
 class PublishingCompany
@@ -15,6 +16,7 @@ class PublishingCompany
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ORM\OneToMany(targetEntity="Book", mappedBy="publishing_company_id")
      */
     private $id;
 
