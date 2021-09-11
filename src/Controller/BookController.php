@@ -25,15 +25,15 @@ class BookController extends AbstractController
         try {
             //Pegando os valores do banco de dados
             $em = $this->getDoctrine()->getManager();
-            
+
             $repo = $em->getRepository(Book::class);
             if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
 
             $book = $repo->findAllWithJoin();
-            
+
             return $this->json($book);
         } catch (Exception $exception) {
-            return $this->exceptionResponse( $request, $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 
@@ -42,9 +42,14 @@ class BookController extends AbstractController
      */
     public function showBook($bookId)
     {
-        $book = $this->getDoctrine()->getRepository(Book::class)->find($bookId);
+        $em = $this->getDoctrine()->getManager();
 
-        return $this->json(['data' => $book]);
+        $repo = $em->getRepository(Book::class);
+        if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
+
+        $book = $repo->findOnlyOne($bookId);
+
+        return $this->json($book);
     }
 
     /**
@@ -94,7 +99,7 @@ class BookController extends AbstractController
                 $book->setQuantityPages($data['quantity_pages']);
             if ($request->request->has('release_date'))
                 $book->setReleaseDate(new DateTime($data['release_date']));
-            if($request->request->has('publishing_company'))
+            if ($request->request->has('publishing_company'))
                 $book->setPublishingCompanyId($data['publishing_company']);
 
             $em = $doctrine->getManager();
@@ -113,7 +118,7 @@ class BookController extends AbstractController
     {
         try {
             $doctrine = $this->getDoctrine();
-            
+
             $book = $doctrine->getRepository(Book::class)->find($bookId);
 
             $em = $doctrine->getManager();
@@ -121,7 +126,6 @@ class BookController extends AbstractController
             $em->flush();
 
             return new Response("Livro apagado com sucesso");
-
         } catch (Exception $exception) {
             return new Response('Error: ' . $exception);
         }

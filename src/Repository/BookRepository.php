@@ -30,8 +30,23 @@ class BookRepository extends ServiceEntityRepository
     {
         try {
             return $this->createQueryBuilder('b')
-                ->select('b.title,b.author,b.quantityPages,b.releaseDate, p.name')
+                ->select('b.id, b.title, b.author, b.quantityPages, b.releaseDate, p.name')
                 ->innerJoin(PublishingCompany::class, 'p', 'WITH', 'p = b.publishingCompanyId')
+                ->getQuery()->getResult();
+        } catch (Exception $exception) {
+            error_log($exception->getMessage());
+            return null;
+        }
+    }
+
+    public function findOnlyOne(int $id)
+    {
+        try {
+            return $this->createQueryBuilder('b')
+                ->select('b.id, b.title, b.author, b.quantityPages, b.releaseDate, p.name')
+                ->innerJoin(PublishingCompany::class, 'p', 'WITH', 'p = b.publishingCompanyId')
+                ->where('b.id = :id')
+                ->setParameter('id',$id)
                 ->getQuery()->getResult();
         } catch (Exception $exception) {
             error_log($exception->getMessage());
