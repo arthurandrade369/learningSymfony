@@ -26,24 +26,13 @@ class BookRepository extends ServiceEntityRepository
     // /**
     //  * @return Book[] Returns an array of Book objects
     //  */
-
     public function findAllWithJoin()
     {
         try {
-            $sql = '
-                SELECT
-                    b.*, p.name
-                FROM
-                    book AS b
-                    INNER JOIN publishing_company AS p ON b.publishing_company_id = p.id
-            ';
-
-            $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-            $rsm->addRootEntityFromClassMetadata(Book::class,'b');
-            $rsm->addJoinedEntityFromClassMetadata(PublishingCompany::class,'p','b','id');
-            
-            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-            return $query->getResult();
+            return $this->createQueryBuilder('b')
+                ->select('b.title,b.author,b.quantityPages,b.releaseDate, p.name')
+                ->innerJoin(PublishingCompany::class, 'p', 'WITH', 'p = b.publishingCompanyId')
+                ->getQuery()->getResult();
         } catch (Exception $exception) {
             error_log($exception->getMessage());
             return null;
