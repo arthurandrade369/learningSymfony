@@ -29,25 +29,56 @@ class BookRepository extends ServiceEntityRepository
     public function findAllWithJoin()
     {
         try {
-            return $this->createQueryBuilder('b')
-                ->select('b.id, b.title, b.author, b.quantityPages, b.releaseDate, p.name')
-                ->innerJoin(PublishingCompany::class, 'p', 'WITH', 'p = b.publishingCompanyId')
-                ->getQuery()->getResult();
+            $sql = "
+                SELECT
+                    b.id, b.title, b.author, b.quantity_pages, b.release_date, p.name
+                FROM
+                    book AS b
+                    INNER JOIN publishing_company AS p ON p.id = b.publishing_company_id
+            ";
+
+            $rsm = new ResultSetMapping();
+            $rsm->addScalarResult('id', 'id');
+            $rsm->addScalarResult('title', 'title');
+            $rsm->addScalarResult('author', 'author');
+            $rsm->addScalarResult('quantity_pages', 'quantityPages');
+            $rsm->addScalarResult('release_date', 'releaseDate');
+            $rsm->addScalarResult('name', 'name');
+            
+            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+
+            return $query->getResult();
         } catch (Exception $exception) {
             error_log($exception->getMessage());
             return null;
         }
     }
-
+    
     public function findOnlyOne(int $id)
     {
         try {
-            return $this->createQueryBuilder('b')
-                ->select('b.id, b.title, b.author, b.quantityPages, b.releaseDate, p.name')
-                ->innerJoin(PublishingCompany::class, 'p', 'WITH', 'p = b.publishingCompanyId')
-                ->where('b.id = :id')
-                ->setParameter('id',$id)
-                ->getQuery()->getResult();
+            $sql = "
+                SELECT
+                    b.id, b.title, b.author, b.quantity_pages, b.release_date, p.name
+                FROM
+                    book AS b
+                    INNER JOIN publishing_company AS p ON p.id = b.publishing_company_id AND b.id = :id
+            ";
+
+            $rsm = new ResultSetMapping();
+            $rsm->addScalarResult('id', 'id');
+            $rsm->addScalarResult('title', 'title');
+            $rsm->addScalarResult('author', 'author');
+            $rsm->addScalarResult('quantity_pages', 'quantityPages');
+            $rsm->addScalarResult('release_date', 'releaseDate');
+            $rsm->addScalarResult('name', 'name');
+
+
+            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+            $query->setParameter('id', $id);
+
+            return $query->getResult();
+
         } catch (Exception $exception) {
             error_log($exception->getMessage());
             return null;
