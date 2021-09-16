@@ -29,25 +29,30 @@ class BookRepository extends ServiceEntityRepository
     public function findAllWithJoin()
     {
         try {
-            $sql = "
-                SELECT
-                    b.id, b.title, b.author, b.quantity_pages, b.release_date, p.name
-                FROM
-                    book AS b
-                    INNER JOIN publishing_company AS p ON p.id = b.publishing_company_id
-            ";
+            // $sql = "
+            //     SELECT
+            //         b.id, b.title, b.author, b.quantity_pages, b.release_date, p.name AS company
+            //     FROM
+            //         book AS b
+            //         INNER JOIN publishing_company AS p ON p.id = b.publishing_company_id
+            // ";
 
-            $rsm = new ResultSetMapping();
-            $rsm->addScalarResult('id', 'id');
-            $rsm->addScalarResult('title', 'title');
-            $rsm->addScalarResult('author', 'author');
-            $rsm->addScalarResult('quantity_pages', 'quantityPages');
-            $rsm->addScalarResult('release_date', 'releaseDate');
-            $rsm->addScalarResult('name', 'name');
+            // $rsm = new ResultSetMapping();
+            // $rsm->addScalarResult('id', 'id');
+            // $rsm->addScalarResult('title', 'title');
+            // $rsm->addScalarResult('author', 'author');
+            // $rsm->addScalarResult('quantity_pages', 'quantityPages');
+            // $rsm->addScalarResult('release_date', 'releaseDate');
+            // $rsm->addScalarResult('company', 'company');
             
-            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+            // $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
 
-            return $query->getResult();
+            // return $query->getResult();
+
+            return $this->createQueryBuilder('b')
+            ->innerJoin('publishingCompany','p','WITH','p.id = b.publishingCompany')
+            ->getQuery()->getResult();
+            
         } catch (Exception $exception) {
             error_log($exception->getMessage());
             return null;

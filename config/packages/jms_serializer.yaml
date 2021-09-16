@@ -1,0 +1,22 @@
+jms_serializer:
+  handlers:
+    datetime:
+      default_format: "Y-m-d\\TH:i:sP" # ATOM
+      default_timezone: "UTC"
+  visitors:
+    json_serialization:
+      options: [ 64, 256, 1024 ]
+    json_deserialization:
+      options: [ 64, 256, 1024 ]
+  property_naming:
+    id: 'jms_serializer.identical_property_naming_strategy'
+  metadata:
+    cache: file
+    debug: "%kernel.debug%"
+    file_cache:
+      dir: "%kernel.cache_dir%/serializer"
+    auto_detection: true
+    directories:
+      App:
+        namespace_prefix: "App"
+        path: "%kernel.project_dir%/src/Resources/config/serializer"

@@ -1,0 +1,26 @@
+App\Entity\Book:
+  exclusion_policy: All
+  properties:
+    id:
+      expose: true
+      type: integer
+      group: ['Show', 'List']
+    title:
+      expose: true
+      type: string
+      group: ['Show', 'List', 'Create']
+    author:
+      expose: true
+      type: string
+      group: ['Show', 'List', 'Create']
+    quantityPages:
+      expose: true
+      type: integer
+      group: ['Show', 'List', 'Create']
+    releaseDate:
+      expose: true
+      type: date
+      group: ['Show', 'List', 'Create']
+    publishingCompany:
+      expose: true
+      type: App\Entity\PublishingCompany

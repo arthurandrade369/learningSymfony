@@ -10,6 +10,8 @@ use App\Entity\Book;
 use App\Repository\BookRepository;
 use DateTime;
 use Exception;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerBuilder;
 
 /**
  * @Route("/book", name="book_")
@@ -30,9 +32,9 @@ class BookController extends AbstractController
             if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
 
             $book = $repo->findAllWithJoin();
-
-            return $this->json($book);
-        } catch (Exception $exception) {
+            
+            return new Response($this->serializer($book,'json'));
+        } catch (Exception $exception) { 
             return $this->exceptionResponse($request, $exception);
         }
     }
@@ -68,7 +70,7 @@ class BookController extends AbstractController
             $book->setBookAuthor($data['author']);
             $book->setQuantityPages($data['quantity_pages']);
             $book->setReleaseDate(new DateTime(($data['release_date'])));
-            $book->setPublishingCompanyId($data['publishing_company']);
+            $book->setPublishingCompany($data['publishing_company']);
 
             $em->persist($book);
             $em->flush();

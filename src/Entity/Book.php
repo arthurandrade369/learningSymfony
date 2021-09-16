@@ -41,9 +41,9 @@ class Book
 
     /**
      * @ORM\ManyToOne(targetEntity="PublishingCompany", inversedBy="id")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="publishing_company_id")
      */
-    private $publishingCompanyId;
+    private $publishingCompany;
 
     public function getId(): ?int
     {
@@ -98,14 +98,14 @@ class Book
         return $this;
     }
 
-    public function getPublishingCompanyId(): ?int
+    public function getPublishingCompany(): ?int
     {
-        return $this->publishingCompanyId;
+        return $this->publishingCompany;
     }
 
-    public function setPublishingCompanyId(int $publishingCompanyId): self
+    public function setPublishingCompany(int $publishingCompany): self
     {
-        $this->publishingCompanyId = $publishingCompanyId;
+        $this->publishingCompany = $publishingCompany;
 
         return $this;
     }
@@ -116,9 +116,8 @@ class Book
         $this->setBookAuthor($object->getBookAuthor());
         $this->setQuantityPages($object->getQuantityPages());
         $this->setReleaseDate($object->getReleaseDate());
-        $this->setPublishingCompanyId($object->getPublishingCompanyId());
+        $this->setPublishingCompany($object->getPublishingCompany());
 
         return $this;
     }
-
 }
