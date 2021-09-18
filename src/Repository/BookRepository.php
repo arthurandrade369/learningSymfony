@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Book;
-use App\Entity\PublishingCompany;
+use App\Entity\Publisher;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
@@ -23,67 +23,18 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    // /**
-    //  * @return Book[] Returns an array of Book objects
-    //  */
-    public function findAllWithJoin()
-    {
-        try {
-            // $sql = "
-            //     SELECT
-            //         b.id, b.title, b.author, b.quantity_pages, b.release_date, p.name AS company
-            //     FROM
-            //         book AS b
-            //         INNER JOIN publishing_company AS p ON p.id = b.publishing_company_id
-            // ";
-
-            // $rsm = new ResultSetMapping();
-            // $rsm->addScalarResult('id', 'id');
-            // $rsm->addScalarResult('title', 'title');
-            // $rsm->addScalarResult('author', 'author');
-            // $rsm->addScalarResult('quantity_pages', 'quantityPages');
-            // $rsm->addScalarResult('release_date', 'releaseDate');
-            // $rsm->addScalarResult('company', 'company');
-            
-            // $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-
-            // return $query->getResult();
-
-            return $this->createQueryBuilder('b')
-            ->innerJoin('publishingCompany','p','WITH','p.id = b.publishingCompany')
-            ->getQuery()->getResult();
-            
-        } catch (Exception $exception) {
-            error_log($exception->getMessage());
-            return null;
-        }
-    }
-    
+    /**
+     * @return Book[] Returns an array of Book object
+     */
     public function findOnlyOne(int $id)
     {
         try {
-            $sql = "
-                SELECT
-                    b.id, b.title, b.author, b.quantity_pages, b.release_date, p.name
-                FROM
-                    book AS b
-                    INNER JOIN publishing_company AS p ON p.id = b.publishing_company_id AND b.id = :id
-            ";
-
-            $rsm = new ResultSetMapping();
-            $rsm->addScalarResult('id', 'id');
-            $rsm->addScalarResult('title', 'title');
-            $rsm->addScalarResult('author', 'author');
-            $rsm->addScalarResult('quantity_pages', 'quantityPages');
-            $rsm->addScalarResult('release_date', 'releaseDate');
-            $rsm->addScalarResult('name', 'name');
-
-
-            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-            $query->setParameter('id', $id);
-
-            return $query->getResult();
-
+            return $this->createQueryBuilder('b')
+            ->select('b.title, b.author, b.quantityPages, b.releaseDate, p.name')
+            ->innerJoin(Publisher::class,'p','WITH','p.id = b.publisher')
+            ->where('b.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getResult();
         } catch (Exception $exception) {
             error_log($exception->getMessage());
             return null;

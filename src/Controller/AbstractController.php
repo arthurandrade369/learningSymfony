@@ -53,10 +53,14 @@ class AbstractController extends BaseController
         return $response;
     }
 
-    public function serializer($data, $format = 'json')
+    public function serializer($data, $format = 'json', $type = null)
     {
-        $data = $this->serializer->serialize($data, $format);
-
+        if (is_null($type)) {
+            $data = $this->serializer->serialize($data, $format);
+        } else {
+            $data = $this->serializer->deserialize($data, $type, $format);
+        }
+        
         return $data;
     }
 }

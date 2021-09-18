@@ -19,8 +19,8 @@ App\Entity\Book:
       group: ['Show', 'List', 'Create']
     releaseDate:
       expose: true
-      type: date
+      type: datetime
       group: ['Show', 'List', 'Create']
     publishingCompany:
       expose: true
-      type: App\Entity\PublishingCompany
+      type: App\Entity\Publisher

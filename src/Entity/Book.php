@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BookRepository;
-use App\Entity\PublishingCompany;
+use App\Entity\Publisher;
 
 /**
  * @ORM\Entity(repositoryClass=BookRepository::class)
@@ -40,10 +40,10 @@ class Book
     private $releaseDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="PublishingCompany", inversedBy="id")
-     * @ORM\Column(type="integer", name="publishing_company_id")
+     * @ORM\ManyToOne(targetEntity="Publisher", inversedBy="id")
+     * @ORM\Column(type="integer", name="publisher_id")
      */
-    private $publishingCompany;
+    private $publisher;
 
     public function getId(): ?int
     {
@@ -98,14 +98,14 @@ class Book
         return $this;
     }
 
-    public function getPublishingCompany(): ?int
+    public function getPublisher(): ?int
     {
-        return $this->publishingCompany;
+        return $this->publisher;
     }
 
-    public function setPublishingCompany(int $publishingCompany): self
+    public function setPublisher(int $publisher): self
     {
-        $this->publishingCompany = $publishingCompany;
+        $this->publisher = $publisher;
 
         return $this;
     }
@@ -116,7 +116,7 @@ class Book
         $this->setBookAuthor($object->getBookAuthor());
         $this->setQuantityPages($object->getQuantityPages());
         $this->setReleaseDate($object->getReleaseDate());
-        $this->setPublishingCompany($object->getPublishingCompany());
+        $this->setPublisher($object->getPublisher());
 
         return $this;
     }

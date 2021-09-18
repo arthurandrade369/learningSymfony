@@ -1,0 +1,11 @@
+App\Entity\Publisher:
+  exclusion_policy: All
+  properties:
+    id:
+      expose: true
+      type: integer
+      group: ['Show', 'List']
+    name:
+      expose: true
+      type: string
+      group: ['Show', 'List', 'Create']

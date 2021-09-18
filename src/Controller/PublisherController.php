@@ -3,7 +3,8 @@
 namespace App\Controller;
 
 use App\Controller\AbstractController;
-use App\Entity\PublishingCompany;
+use App\Entity\Publisher;
+use App\Repository\PublisherRepository;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,32 +13,32 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/publishing/company", name="publishing_company_")
  */
-class PublishingCompanyController extends AbstractController
+class PublisherController extends AbstractController
 {
     /**
      * @Route("", name="list", methods={"GET"})
      */
-    public function listCompanies(): Response
+    public function listPublishers(): Response
     {
         try {
             $em = $this->getDoctrine()->getManager();
-            $company = $em->getRepository(PublishingCompany::class)->findAll();
+            $publisher = $em->getRepository(Publisher::class)->findAll();
 
-            return $this->json($company);
+            return new Response($this->serializer($publisher));
         } catch (Exception $exception) {
             return new Response('Error: ' . $exception);
         }
     }
 
     /**
-     * @Route("/{companyId}", name="show", methods={"GET"})
+     * @Route("/{publisherId}", name="show", methods={"GET"})
      */
-    public function showCompany($companyId)
+    public function showPublisher($publisherId)
     {
         try {
-            $company = $this->getDoctrine()->getRepository(PublishingCompany::class)->find($companyId);
+            $publisher = $this->getDoctrine()->getRepository(Publisher::class)->find($publisherId);
 
-            return $this->json($company);
+            return new Response($this->serializer($publisher));
         } catch (Exception $exception) {
             return new Response("Error " . $exception);
         }
@@ -46,23 +47,20 @@ class PublishingCompanyController extends AbstractController
     /**
      * @Route("", name="create", methods={"POST"})
      */
-    public function createCompany(Request $request)
+    public function createPublisher(Request $request)
     {
         try {
             $em = $this->getDoctrine()->getManager();
 
             $data = $request->request->all();
 
-            $company = new PublishingCompany();
-            $company->setName($data['name']);
+            $publisher = new Publisher();
+            $publisher->setName($data['name']);
 
-            $em->persist($company);
+            $em->persist($publisher);
             $em->flush();
 
-            return $this->json([
-                'Response' => "Cadastrado com sucesso",
-                'data' => $company,
-            ]);
+            return new Response($this->serializer($publisher));
         } catch (Exception $exception) {
             return new Response("Error " . $exception);
         }
@@ -78,7 +76,7 @@ class PublishingCompanyController extends AbstractController
 
             $doctrine = $this->getDoctrine();
 
-            $company = $doctrine->getRepository(PublishingCompany::class)->find($companyId);
+            $company = $doctrine->getRepository(Publisher::class)->find($companyId);
             $company->setName($data['name']);
 
             $em = $doctrine->getManager();
@@ -98,7 +96,7 @@ class PublishingCompanyController extends AbstractController
         try {
             $doctrine = $this->getDoctrine();
 
-            $book = $doctrine->getRepository(PublishingCompany::class)->find($companyId);
+            $book = $doctrine->getRepository(Publisher::class)->find($companyId);
 
             $em = $doctrine->getManager();
             $em->remove($book);

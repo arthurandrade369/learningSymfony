@@ -12,6 +12,7 @@ use DateTime;
 use Exception;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/book", name="book_")
@@ -28,13 +29,12 @@ class BookController extends AbstractController
             //Pegando os valores do banco de dados
             $em = $this->getDoctrine()->getManager();
 
-            $repo = $em->getRepository(Book::class);
-            if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
+            $book = $em->getRepository(Book::class)->findAll();
 
-            $book = $repo->findAllWithJoin();
-            
-            return new Response($this->serializer($book,'json'));
-        } catch (Exception $exception) { 
+            //if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
+
+            return new Response($this->serializer($book));
+        } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
     }
@@ -42,16 +42,20 @@ class BookController extends AbstractController
     /**
      * @Route("/{bookId}", name="show", methods={"GET"})
      */
-    public function showBook($bookId)
+    public function showBook($bookId, Request $request): Response
     {
-        $em = $this->getDoctrine()->getManager();
+        try {
+            $em = $this->getDoctrine()->getManager();
 
-        $repo = $em->getRepository(Book::class);
-        if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
+            $repo = $em->getRepository(Book::class);
+            if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
 
-        $book = $repo->findOnlyOne($bookId);
+            $book = $repo->findOnlyOne($bookId);
 
-        return $this->json($book);
+            return new Response($this->serializer($book));
+        } catch (Exception $exception) {
+            return $this->exceptionResponse($request, $exception);
+        }
     }
 
     /**
@@ -70,7 +74,7 @@ class BookController extends AbstractController
             $book->setBookAuthor($data['author']);
             $book->setQuantityPages($data['quantity_pages']);
             $book->setReleaseDate(new DateTime(($data['release_date'])));
-            $book->setPublishingCompany($data['publishing_company']);
+            $book->setPublisher($data['publishing_company']);
 
             $em->persist($book);
             $em->flush();
@@ -102,7 +106,7 @@ class BookController extends AbstractController
             if ($request->request->has('release_date'))
                 $book->setReleaseDate(new DateTime($data['release_date']));
             if ($request->request->has('publishing_company'))
-                $book->setPublishingCompanyId($data['publishing_company']);
+                $book->setPublisherId($data['publishing_company']);
 
             $em = $doctrine->getManager();
             $em->flush();

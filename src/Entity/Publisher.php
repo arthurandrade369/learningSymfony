@@ -3,20 +3,20 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\PublishingCompanyRepository;
+use App\Repository\PublisherRepository;
 use App\Entity\Book;
 
 /**
- * @ORM\Entity(repositoryClass=PublishingCompanyRepository::class)
- * @ORM\Table(name="publishing_company")
+ * @ORM\Entity(repositoryClass=PublisherRepository::class)
+ * @ORM\Table(name="publisher")
  */
-class PublishingCompany
+class Publisher
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="Book", mappedBy="publishing_company_id")
+     * @ORM\OneToMany(targetEntity="Book", mappedBy="publisher")
      */
     private $id;
 
