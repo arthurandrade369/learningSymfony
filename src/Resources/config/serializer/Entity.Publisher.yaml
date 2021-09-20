@@ -4,7 +4,7 @@ App\Entity\Publisher:
     id:
       expose: true
       type: integer
-      group: ['Show', 'List']
+      group: ['List']
     name:
       expose: true
       type: string

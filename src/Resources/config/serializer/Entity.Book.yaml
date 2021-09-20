@@ -4,7 +4,7 @@ App\Entity\Book:
     id:
       expose: true
       type: integer
-      group: ['Show', 'List']
+      group: ['List']
     title:
       expose: true
       type: string
@@ -24,3 +24,4 @@ App\Entity\Book:
     publishingCompany:
       expose: true
       type: App\Entity\Publisher
+      group: ['Show', 'List']

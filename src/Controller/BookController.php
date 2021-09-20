@@ -52,7 +52,7 @@ class BookController extends AbstractController
 
             $book = $repo->findOnlyOne($bookId);
 
-            return new Response($this->serializer($book));
+            return new Response($this->serializer($book, 'json', SerializationContext::create()->setGroups(array('Show'))));
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
