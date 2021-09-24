@@ -8,8 +8,11 @@ security:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             entity:
-                class: App\Entity\User
-                property: apiToken
+                class: App\Entity\Account
+                property: email
+        custom_user_provider:
+          id: App\Security\AccountProvider
+          
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -18,10 +21,9 @@ security:
             anonymous: lazy
             provider: app_user_provider
             logout: ~
-
             guard:
-                    authenticators:
-                        -App\Security\TokenAuthenticator
+                authenticators:
+                    - App\Security\TokenAuthenticatorSecurity
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication

@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
-class TokenAuthenticator extends AbstractGuardAuthenticator
+class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
 {
     private $em;
 
@@ -28,7 +28,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return $request->headers->has('X-AUTH-TOKEN');
+        return $request->headers->has('Authorization');
     }
 
     /**
@@ -37,7 +37,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        return $request->headers->get('X-AUTH-TOKEN');
+        return $request->headers->get('Authorization');
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface

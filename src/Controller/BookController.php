@@ -29,9 +29,10 @@ class BookController extends AbstractController
             //Pegando os valores do banco de dados
             $em = $this->getDoctrine()->getManager();
 
-            $book = $em->getRepository(Book::class)->findAll();
+            $repo = $em->getRepository(Book::class);
+            if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
 
-            //if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
+            $book = $repo->findEverything();
 
             return new Response($this->serializer($book));
         } catch (Exception $exception) {
@@ -81,7 +82,7 @@ class BookController extends AbstractController
 
             return $this->json($book);
         } catch (Exception $exception) {
-            return new Response('Error: ' . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 
@@ -97,30 +98,31 @@ class BookController extends AbstractController
 
             $book = $doctrine->getRepository(Book::class)->find($bookId);
 
-            if ($request->request->has('title'))
-                $book->setBookTitle($data['title']);
-            if ($request->request->has('author'))
-                $book->setBookAuthor($data['author']);
-            if ($request->request->has('quantity_pages'))
-                $book->setQuantityPages($data['quantity_pages']);
-            if ($request->request->has('release_date'))
-                $book->setReleaseDate(new DateTime($data['release_date']));
-            if ($request->request->has('publishing_company'))
-                $book->setPublisherId($data['publishing_company']);
+            // if ($request->request->has('title'))
+            //     $book->setBookTitle($data['title']);
+            // if ($request->request->has('author'))
+            //     $book->setBookAuthor($data['author']);
+            // if ($request->request->has('quantity_pages'))
+            //     $book->setQuantityPages($data['quantity_pages']);
+            // if ($request->request->has('release_date'))
+            //     $book->setReleaseDate(new DateTime($data['release_date']));
+            // if ($request->request->has('publishing_company'))
+            //     $book->setPublisherId($data['publishing_company']);
+            $book->setObject($data);
 
             $em = $doctrine->getManager();
             $em->flush();
 
             return new Response("Livro atualizado com sucesso");
         } catch (Exception $exception) {
-            return new Response('Error: ' . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 
     /**
      * @Route("/{bookId}", name="delete", methods={"DELETE"})
      */
-    public function deleteBook($bookId)
+    public function deleteBook($bookId, Request $request)
     {
         try {
             $doctrine = $this->getDoctrine();
@@ -133,7 +135,7 @@ class BookController extends AbstractController
 
             return new Response("Livro apagado com sucesso");
         } catch (Exception $exception) {
-            return new Response('Error: ' . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 }

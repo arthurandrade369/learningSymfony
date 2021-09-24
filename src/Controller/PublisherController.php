@@ -18,7 +18,7 @@ class PublisherController extends AbstractController
     /**
      * @Route("", name="list", methods={"GET"})
      */
-    public function listPublishers(): Response
+    public function listPublishers(Request $request): Response
     {
         try {
             $em = $this->getDoctrine()->getManager();
@@ -26,21 +26,21 @@ class PublisherController extends AbstractController
 
             return new Response($this->serializer($publisher));
         } catch (Exception $exception) {
-            return new Response('Error: ' . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 
     /**
      * @Route("/{publisherId}", name="show", methods={"GET"})
      */
-    public function showPublisher($publisherId)
+    public function showPublisher($publisherId, Request $request)
     {
         try {
             $publisher = $this->getDoctrine()->getRepository(Publisher::class)->find($publisherId);
 
             return new Response($this->serializer($publisher));
         } catch (Exception $exception) {
-            return new Response("Error " . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 
@@ -49,6 +49,8 @@ class PublisherController extends AbstractController
      */
     public function createPublisher(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         try {
             $em = $this->getDoctrine()->getManager();
 
@@ -62,7 +64,7 @@ class PublisherController extends AbstractController
 
             return new Response($this->serializer($publisher));
         } catch (Exception $exception) {
-            return new Response("Error " . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 
@@ -71,6 +73,8 @@ class PublisherController extends AbstractController
      */
     public function updateCompany($companyId, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         try {
             $data = $request->request->all();
 
@@ -84,15 +88,17 @@ class PublisherController extends AbstractController
 
             return new Response("Editora atualizada com sucesso!");
         } catch (Exception $exception) {
-            return new Response("Error " . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 
     /**
      * @Route("/{companyId}", name="delete", methods={"DELETE"})
      */
-    public function deleteCompany($companyId)
+    public function deleteCompany($companyId, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         try {
             $doctrine = $this->getDoctrine();
 
@@ -104,7 +110,7 @@ class PublisherController extends AbstractController
 
             return new Response("Editora deletado com sucesso!");
         } catch (Exception $exception) {
-            return new Response("Error " . $exception);
+            return $this->exceptionResponse($request, $exception);
         }
     }
 }

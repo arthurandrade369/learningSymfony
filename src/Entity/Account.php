@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Entity(repositoryClass=AccountRepository::class)
+ * @ORM\Table(name="accounts")
  */
-class User implements UserInterface
+class Account implements UserInterface
 {
     /**
      * @ORM\Id
@@ -17,9 +18,14 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=64)
+     */
+    private $name;
+    
+    /**
+     * @ORM\Column(type="string", length=96, unique=true)
      */
     private $email;
 
@@ -30,14 +36,25 @@ class User implements UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=64)
      */
     private $password;
 
     /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @ORM\Column(type="string", length=32)
      */
-    private $apiToken;
+    private $type;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $modifiedAt;
+
 
     public function getId(): ?int
     {
@@ -120,14 +137,50 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getApiToken(): ?string
+    public function getType(): ?string
     {
-        return $this->apiToken;
+        return $this->type;
     }
 
-    public function setApiToken(?string $apiToken): self
+    public function setType(string $type): self
     {
-        $this->apiToken = $apiToken;
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getModifiedAt(): ?\DateTimeInterface
+    {
+        return $this->modifiedAt;
+    }
+
+    public function setModifiedAt(\DateTimeInterface $modifiedAt): self
+    {
+        $this->modifiedAt = $modifiedAt;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
