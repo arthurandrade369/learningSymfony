@@ -1,7 +1,7 @@
 <?php
 namespace App\Security;
 
-use App\Entity\User;
+use App\Entity\Account;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

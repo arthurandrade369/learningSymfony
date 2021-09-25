@@ -26,7 +26,6 @@ class BookController extends AbstractController
     public function listBooks(Request $request): Response
     {
         try {
-            //Pegando os valores do banco de dados
             $em = $this->getDoctrine()->getManager();
 
             $repo = $em->getRepository(Book::class);

@@ -1,0 +1,31 @@
+App\Entity\Account:
+  exclusion_policy: All
+  properties:
+    id:
+      expose: true
+      type: integer
+      group: ['List']
+    name:
+      expose: true
+      type: string
+      group: ['Show', 'List', 'Create']
+    email:
+      expose: true
+      type: string
+      group: ['Show','List','Create']
+    password:
+      expose: false
+      type: string
+      group: ['Create']
+    type:
+      expose: true
+      type: string
+      group: ['Show', 'List','Create']
+    createdAt:
+      expose: true
+      type: datetimeinterface
+      group: ['Show','List']
+    modifiedAt:
+      expose: true
+      type: datetimeinterface
+      group: ['Show','List']
