@@ -5,11 +5,11 @@ namespace App\Security;
 use App\Entity\Account;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Exception;
 
-class AccountProvider implements UserProviderInterface, PasswordUpgraderInterface
+class AccountProvider implements UserProviderInterface
 {
     /**
      * Symfony calls this method if you use features like switch_user
@@ -28,7 +28,7 @@ class AccountProvider implements UserProviderInterface, PasswordUpgraderInterfac
         // The $username argument may not actually be a username:
         // it is whatever value is being returned by the getUsername()
         // method in your User class.
-        throw new \Exception('TODO: fill in loadUserByUsername() inside ' . __FILE__);
+        throw new Exception('TODO: fill in loadUserByUsername() inside ' . __FILE__);
     }
 
     /**
@@ -52,7 +52,7 @@ class AccountProvider implements UserProviderInterface, PasswordUpgraderInterfac
 
         // Return a User object after making sure its data is "fresh".
         // Or throw a UsernameNotFoundException if the user no longer exists.
-        throw new \Exception('TODO: fill in refreshUser() inside ' . __FILE__);
+        throw new Exception('TODO: fill in refreshUser() inside ' . __FILE__);
     }
 
     /**

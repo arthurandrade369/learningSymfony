@@ -10,18 +10,15 @@ use App\Entity\Book;
 use App\Repository\BookRepository;
 use DateTime;
 use Exception;
-use JMS\Serializer\SerializationContext;
-use JMS\Serializer\SerializerBuilder;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * @Route("/book", name="book_")
+ * @Route("/service/v1/book", name="book_")
  */
 class BookController extends AbstractController
 {
 
     /**
-     * @Route("", name="list", methods={"GET"}) 
+     * @Route("", name="list", methods={"GET"})
      */
     public function listBooks(Request $request): Response
     {
@@ -52,7 +49,7 @@ class BookController extends AbstractController
 
             $book = $repo->findOnlyOne($bookId);
 
-            return new Response($this->serializer($book, 'json', SerializationContext::create()->setGroups(array('Show'))));
+            return new Response($this->serializer($book, 'json', ['Show']));
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

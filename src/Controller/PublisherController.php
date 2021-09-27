@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/publishing/company", name="publishing_company_")
+ * @Route("/service/v1/publisher", name="publisher_")
  */
 class PublisherController extends AbstractController
 {

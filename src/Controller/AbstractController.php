@@ -3,16 +3,13 @@
 namespace App\Controller;
 
 use Exception;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use JMS\Serializer\SerializerInterface;
 
-/**
- * @Route("/abstract", name="abstract_")
- */
+
 class AbstractController extends BaseController
 {
     private SerializerInterface $serializer;
@@ -39,11 +36,11 @@ class AbstractController extends BaseController
     {
         $exceptionCode = $exception->getCode() > 0 ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
 
-        $responseBody = json_encode(array(
+        $responseBody = $this->serializer(array(
             'code' => $exceptionCode,
             'message' => $exception->getMessage(),
             'address' => $request->getClientIp()
-        ));
+        )); 
 
         $response = new Response();
         $response->setContent($responseBody);
@@ -51,6 +48,41 @@ class AbstractController extends BaseController
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+    }
+
+    /**
+     * @param Request $request
+     * @param [type] $data
+     * @param [type] $contextGroup
+     * @return void
+     */
+    public function showResponse(Request $request, $data, $contextGroup = null)
+    {
+        if (!is_object($data)) {
+            throw new Exception("Error Processing Request", Response::HTTP_NOT_ACCEPTABLE);
+        }
+
+        return $this->getSerializer()->serialize($data, 'json');
+    }
+
+    /**
+     * @param Request $request
+     * @param [type] $data
+     * @param [type] $contextGroup
+     * @return string
+     */
+    public function dataTableResponse(Request $request, $data, $contextGroup = null): string
+    {
+        if (!is_array($data)) {
+            throw new Exception("an object is needed", Response::HTTP_NOT_ACCEPTABLE);
+        }
+
+        $body = array(
+            "iTotalRecords" => count($data),
+            "aaData" => $data
+        );
+
+        return $this->getSerializer()->serialize($body, 'json');
     }
 
     public function serializer($data, $format = 'json')
