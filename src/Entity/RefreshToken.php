@@ -17,27 +17,27 @@ class RefreshToken
      * @ORM\Column(type="integer")
      * @ORM\OneToMany(targetEntity="AcessToken", mappedBy="refreshToken")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $refreshToken;
+    private string $refreshToken;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private \DateTime $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $modifiedAt;
+    private \DateTime $modifiedAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $expirationAt;
+    private \DateTime $expirationAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="id")
@@ -74,12 +74,12 @@ class RefreshToken
         return $this;
     }
 
-    public function getModifiedAt(): ?\DateTimeImmutable
+    public function getModifiedAt(): ?\DateTime
     {
         return $this->modifiedAt;
     }
 
-    public function setModifiedAt(\DateTimeImmutable $modifiedAt): self
+    public function setModifiedAt(\DateTime $modifiedAt): self
     {
         $this->modifiedAt = $modifiedAt;
 

@@ -16,32 +16,32 @@ class AcessToken
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $acessToken;
+    private string $acessToken;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private \DateTime $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $modifiedAt;
+    private \Datetime $modifiedAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $expirationAt;
+    private \DateTime $expirationAt;
 
     /**
      * @ORM\Column(type="string", length=32)
      */
-    private $typeToken;
+    private string $typeToken;
 
     /**
      * @ORM\Column(type="integer")

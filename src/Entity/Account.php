@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -18,43 +19,43 @@ class Account implements UserInterface
      * @ORM\Column(type="integer")
      * @ORM\OneToMany(targetEntity="RefreshToken", mappedBy="account")
      */
-    private $id;
+    private int $id;
     
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $name;
+    private string $name;
     
     /**
      * @ORM\Column(type="string", length=96, unique=true)
      */
-    private $email;
+    private string $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string")
      */
-    private $roles = [];
+    private string $scope;
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", length=64)
      */
-    private $password;
+    private string $password;
 
     /**
      * @ORM\Column(type="string", length=32)
      */
-    private $type;
+    private string $type;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private \Datetime $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $modifiedAt;
+    private \Datetime $modifiedAt;
 
 
     public function getId(): ?int
@@ -89,16 +90,23 @@ class Account implements UserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $scopes = explode(':',$this->scope);
+
+        $roles = $scopes;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function getScope(): string
     {
-        $this->roles = $roles;
+        return $this->scope;
+    }
+
+    public function setScope(string $scope): self
+    {
+        $this->scope = $scope;
 
         return $this;
     }

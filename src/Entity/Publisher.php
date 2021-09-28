@@ -18,12 +18,12 @@ class Publisher
      * @ORM\Column(type="integer")
      * @ORM\OneToMany(targetEntity="Book", mappedBy="publisher")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $name;
+    private string $name;
 
     public function getId(): ?int
     {

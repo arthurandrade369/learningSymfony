@@ -45,8 +45,11 @@ class AccountController extends AbstractController
 
             $account = new Account;
             $account->setName($data['name']);
-            $account->setEmail($data['email']);
-            $account->setPassword($this->encodePassword($data['password'],'md5'));
+            if (!$this->checkIsEmail($data['email'])) {
+                $account->setEmail($data['email']);
+                throw new Exception("Email already exists", Response::HTTP_CONFLICT);
+            }
+            $account->setPassword($this->encodePassword($data['password'], 'md5'));
             $account->setType($data['type']);
             $account->setCreatedAt(new \DateTime('now', new DateTimeZone('America/Sao_Paulo')));
             $account->setModifiedAt(new \DateTime('now', new DateTimeZone('America/Sao_Paulo')));
@@ -63,8 +66,27 @@ class AccountController extends AbstractController
         }
     }
 
+    /**
+     * @Route("", name=("show"), methods={"GET"})
+     */
+    public function showAccount($bookId, Request $request)
+    {
+        
+    }
+
     public function encodePassword($password)
     {
         return md5($password);
+    }
+
+    public function checkIsEmail($email)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $data = $em->getRepository(Account::class)->findBy($email);
+
+        if (count($data) > 0) return false;
+
+        return true;
     }
 }

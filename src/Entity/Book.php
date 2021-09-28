@@ -17,30 +17,30 @@ class Book
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $title;
+    private string $title;
 
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $author;
+    private string $author;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $quantityPages;
+    private int $quantityPages;
 
     /**
      * @ORM\Column(type="date")
      */
-    private $releaseDate;
+    private \DateTime $releaseDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Publisher", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="Publisher")
      * @ORM\Column(type="integer", name="publisher_id")
      */
     private $publisher;
@@ -116,7 +116,6 @@ class Book
         $this->setBookAuthor($object->getBookAuthor());
         $this->setQuantityPages($object->getQuantityPages());
         $this->setReleaseDate($object->getReleaseDate());
-        $this->setPublisher($object->getPublisher());
 
         return $this;
     }
