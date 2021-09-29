@@ -42,6 +42,8 @@ class Account implements UserInterface
      */
     private string $password;
 
+    private string $plainPassword;
+    
     /**
      * @ORM\Column(type="string", length=32)
      */
@@ -190,6 +192,26 @@ class Account implements UserInterface
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of plainPassword
+     */ 
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @return  self
+     */ 
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }

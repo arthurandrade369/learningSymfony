@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Controller\AbstractController;
 use App\Entity\Account;
+use App\Repository\AccountRepository;
 use DateTimeZone;
 use Exception;
 use JMS\Serializer\SerializationContext;
@@ -18,22 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class AccountController extends AbstractController
 {
     /**
-     * @Route("", name="list", methods={"GET"})
-     */
-    public function listAccounts(Request $request): Response
-    {
-        try {
-            $em = $this->getDoctrine()->getManager();
-
-            $account = $em->getRepository(Account::class)->findAll();
-
-            return new Response($this->dataTableResponse($request, $account));
-        } catch (Exception $exception) {
-            return $this->exceptionResponse($request, $exception);
-        }
-    }
-
-    /**
      * @Route("", name="register",  methods={"POST"})
      */
     public function register(Request $request)
@@ -41,12 +26,11 @@ class AccountController extends AbstractController
         try {
             $em = $this->getDoctrine()->getManager();
 
-            $data = $request->request->all();
-
-            $account = new Account;
+            $account = $this->getObjectPerRequest($request, Account::class);
             $account->setName($data['name']);
             if (!$this->checkIsEmail($data['email'])) {
                 $account->setEmail($data['email']);
+            } else {
                 throw new Exception("Email already exists", Response::HTTP_CONFLICT);
             }
             $account->setPassword($this->encodePassword($data['password'], 'md5'));
@@ -67,16 +51,45 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @Route("", name=("show"), methods={"GET"})
+     * @Route("", name="list", methods={"GET"})
      */
-    public function showAccount($bookId, Request $request)
+    public function listAccounts(Request $request): Response
     {
-        
+        try {
+            $em = $this->getDoctrine()->getManager();
+
+            $account = $em->getRepository(Account::class)->findAll();
+
+            return new Response($this->dataTableResponse($request, $account));
+        } catch (Exception $exception) {
+            return $this->exceptionResponse($request, $exception);
+        }
+    }
+
+    /**
+     * @Route("/{id}", name=("show"), methods={"GET"})
+     */
+    public function showAccount($Id, Request $request)
+    {
+    }
+
+    /**
+     * @Route("", name=("show"), methods={"UPDATE"})
+     */
+    public function updateAccount($Id, Request $request)
+    {
+    }
+
+    /**
+     * @Route("", name("delete"), methods={"DELETE"})
+     */
+    public function deleteAccount($id, Request $request)
+    {
     }
 
     public function encodePassword($password)
     {
-        return md5($password);
+        return $password;
     }
 
     public function checkIsEmail($email)

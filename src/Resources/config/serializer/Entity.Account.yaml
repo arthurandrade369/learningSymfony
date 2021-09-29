@@ -14,13 +14,16 @@ App\Entity\Account:
       type: string
       group: ['Show','List','Create']
     password:
-      expose: false
+      expose: true
       type: string
-      group: ['Create']
+    plainPassword:
+      expose: true
+      type: string
+      group: ['Create']  
     type:
       expose: true
       type: string
-      group: ['Show', 'List','Create']
+      group: ['Show', 'List', 'Create']
     createdAt:
       expose: true
       type: datetimeinterface

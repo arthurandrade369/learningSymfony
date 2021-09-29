@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\Controller\AbstractController;
 use App\Entity\Account;
-use DateTimeZone;
-use JMS\Serializer\SerializationContext;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Model\Oauth2Request;
+use App\Repository\AccountRepository;
 use Exception;
 
 /**
@@ -22,17 +21,39 @@ class Oauth2Controller extends AbstractController
      */
     public function login(Request $request)
     {
-        $credentials = $request->request->all();
-
-        $username = $credentials['username'];
-        $password = $credentials['password'];
-
         $em = $this->getDoctrine()->getManager();
-        $account = $em->getRepository(Account::class)->findOneBy($username);
-        if($account['password'] === $password){
-            return createToken();
+
+        $oauth2 = $this->getObjectPerRequest($request, Oauth2Request::class);
+        if (!$oauth2 instanceof Oauth2Request) {
+            throw new Exception("Error Processing Request", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new Response('Invalid credentials', Response::HTTP_UNAUTHORIZED);
+        switch ($oauth2->getGrantType()) {
+            case Oauth2Request::GRANT_TYPE_PASSWORD:
+                $repo = $em->getRepository(Account::class);
+                if (!$repo instanceof AccountRepository) throw new Exception("Error Processing Entity", 500);
+                $account = $repo->getOnlyOne($oauth2->getUsername());
+                if ($account->getPassword() === $oauth2->getPassword()) {
+                    return $this->createToken($request);
+                }
+                break;
+            case Oauth2Request::GRANT_TYPE_REFRESH_TOKEN:
+                # code...
+                break;
+            default:
+                throw new Exception("Authentication method not recognized, grant type required", Response::HTTP_BAD_REQUEST);
+                break;
+        }
+
+        return new Response('Invalid credentials', Response::HTTP_NOT_ACCEPTABLE);
+    }
+
+    public function refreshToken(Request $request)
+    {
+    }
+
+    public function createToken(Request $request)
+    {
+        return 'Ta dando certo';
     }
 }

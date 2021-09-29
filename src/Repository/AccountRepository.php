@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Account;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -35,6 +36,17 @@ class AccountRepository extends ServiceEntityRepository implements PasswordUpgra
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    public function getOnlyOne()
+    {
+        try {
+            return $this->createQueryBuilder('a')
+                ->getQuery()->getResult();
+        } catch (Exception $exception) {
+            error_log($exception->getMessage());
+            return null;
+        }
     }
 
     // /**

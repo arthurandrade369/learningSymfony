@@ -1,0 +1,15 @@
+App\Model\Oauth2:
+  exclusion_policy: All
+  properties:
+    username:
+      expose: true
+      type: string
+      group: ['Create', 'Show']
+    password:
+      expose: true
+      type: string
+      group: ['Create', 'Show']
+    grantType:
+      expose: true
+      type: string
+      group: ['Create', 'Show']

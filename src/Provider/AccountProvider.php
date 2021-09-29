@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security;
+namespace App\Provider;
 
 use App\Entity\Account;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -72,4 +72,7 @@ class AccountProvider implements UserProviderInterface
         // 1. persist the new password in the user storage
         // 2. update the $user object with $user->setPassword($newEncodedPassword);
     }
+
+    public function generateAcessToken()
+    {}
 }
