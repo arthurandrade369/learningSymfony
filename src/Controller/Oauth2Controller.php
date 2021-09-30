@@ -30,12 +30,16 @@ class Oauth2Controller extends AbstractController
 
         switch ($oauth2->getGrantType()) {
             case Oauth2Request::GRANT_TYPE_PASSWORD:
+
                 $repo = $em->getRepository(Account::class);
-                if (!$repo instanceof AccountRepository) throw new Exception("Error Processing Entity", 500);
+                if (!$repo instanceof AccountRepository) throw new Exception("Error Processing Repository", Response::HTTP_INTERNAL_SERVER_ERROR);
+
                 $account = $repo->getOnlyOne($oauth2->getUsername());
+
                 if ($account->getPassword() === $oauth2->getPassword()) {
                     return $this->createToken($request);
                 }
+
                 break;
             case Oauth2Request::GRANT_TYPE_REFRESH_TOKEN:
                 # code...

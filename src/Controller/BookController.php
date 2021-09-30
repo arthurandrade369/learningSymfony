@@ -67,8 +67,8 @@ class BookController extends AbstractController
             $data = $request->request->all();
 
             $book = new Book();
-            $book->setBookTitle($data['title']);
-            $book->setBookAuthor($data['author']);
+            $book->setTitle($data['title']);
+            $book->setAuthor($data['author']);
             $book->setQuantityPages($data['quantity_pages']);
             $book->setReleaseDate(new DateTime(($data['release_date'])));
             $book->setPublisher($data['publishing_company']);

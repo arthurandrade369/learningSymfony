@@ -7,7 +7,6 @@ use App\Entity\Account;
 use App\Repository\AccountRepository;
 use DateTimeZone;
 use Exception;
-use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,21 +24,23 @@ class AccountController extends AbstractController
     {
         try {
             $em = $this->getDoctrine()->getManager();
-
+            
             $account = $this->getObjectPerRequest($request, Account::class);
-            $account->setName($data['name']);
-            if (!$this->checkIsEmail($data['email'])) {
-                $account->setEmail($data['email']);
+
+            if(!$account instanceof Account){
+                throw new Exception("Error Processing Request", 500);
+            }
+            
+            if (!$this->checkIsEmail($account->getEmail())) {
+                $datetime = new \DateTime('now', new DateTimeZone('America/Sao_Paulo'));
+                $account->setCreatedAt($datetime);
+                $account->setModifiedAt($datetime);
+                $em->persist($account);
+                $em->flush();
             } else {
                 throw new Exception("Email already exists", Response::HTTP_CONFLICT);
             }
-            $account->setPassword($this->encodePassword($data['password'], 'md5'));
-            $account->setType($data['type']);
-            $account->setCreatedAt(new \DateTime('now', new DateTimeZone('America/Sao_Paulo')));
-            $account->setModifiedAt(new \DateTime('now', new DateTimeZone('America/Sao_Paulo')));
 
-            $em->persist($account);
-            $em->flush();
 
             return new JsonResponse([
                 'message' => 'Conta criada com sucesso',
@@ -67,21 +68,21 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name=("show"), methods={"GET"})
+     * @Route("/{id}", name="show", methods={"GET"})
      */
     public function showAccount($Id, Request $request)
     {
     }
 
     /**
-     * @Route("", name=("show"), methods={"UPDATE"})
+     * @Route("", name="update", methods={"UPDATE"})
      */
     public function updateAccount($Id, Request $request)
     {
     }
 
     /**
-     * @Route("", name("delete"), methods={"DELETE"})
+     * @Route("", name="delete", methods={"DELETE"})
      */
     public function deleteAccount($id, Request $request)
     {
@@ -92,14 +93,16 @@ class AccountController extends AbstractController
         return $password;
     }
 
-    public function checkIsEmail($email)
+    public function checkIsEmail(string $email): bool
     {
         $em = $this->getDoctrine()->getManager();
 
-        $data = $em->getRepository(Account::class)->findBy($email);
+        $repo = $em->getRepository(Account::class);
+        if(!$repo instanceof AccountRepository) throw new Exception("Error Processing Request", 500);
+        
+        $data = $repo->getByEmail($email);
+        if (count($data) > 0) return true;
 
-        if (count($data) > 0) return false;
-
-        return true;
+        return false;
     }
 }

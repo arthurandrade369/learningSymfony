@@ -4,31 +4,35 @@ App\Entity\Account:
     id:
       expose: true
       type: integer
-      group: ['List']
+      group: ["List"]
     name:
       expose: true
       type: string
-      group: ['Show', 'List', 'Create']
+      group: ["Show", "List", "Create"]
     email:
       expose: true
       type: string
-      group: ['Show','List','Create']
+      group: ["Show", "List", "Create"]
     password:
       expose: true
       type: string
     plainPassword:
       expose: true
       type: string
-      group: ['Create']  
+      group: ["Create"]
+    scope:
+      expose: true
+      type: string
+      group: ["Show","List","Create"]
     type:
       expose: true
       type: string
-      group: ['Show', 'List', 'Create']
+      group: ["Show", "List", "Create"]
     createdAt:
       expose: true
       type: datetimeinterface
-      group: ['Show','List']
+      group: ["Show", "List", "Create"]
     modifiedAt:
       expose: true
       type: datetimeinterface
-      group: ['Show','List']
+      group: ["Show", "List", "Create"]

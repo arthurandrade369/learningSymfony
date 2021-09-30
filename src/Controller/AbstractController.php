@@ -39,13 +39,24 @@ class AbstractController extends BaseController
     public function getObjectPerRequest(Request $request, string $entity, $contextGroup = null)
     {
         $format = 'json';
-        $dataRequest = $request->request->all();
-        $content = $request->getContent();
 
-        $data = json_encode(array_merge($dataRequest, $content));
+        $mBodyData = array();
+        $body = $request->getContent();
 
-        if($contextGroup)
-        {
+        if (!empty($body)) {
+            $mBodyData = json_decode($body, true);
+        }
+
+        $mData = array_merge(
+            $request->request->all(),
+            empty($mBodyData) ? array() : $mBodyData
+        );
+
+        $data = json_encode($mData);
+
+        $context = null;
+
+        if ($contextGroup) {
             $context = DeserializationContext::create();
             $context->setGroups($contextGroup);
         }
@@ -111,13 +122,15 @@ class AbstractController extends BaseController
         return $this->getSerializer()->serialize($body, 'json');
     }
 
-    public function serializer($data, $format = 'json', $contextType = null)
+    public function serializer($data, $contextType = null)
     {
+        $format = 'json';
         return $this->getSerializer()->serialize($data, $format, $contextType);
     }
 
-    public function deserializer($data, $type, $format = 'json', $contextType = null)
+    public function deserializer($data, $type, $contextType = null)
     {
+        $format = 'json';
         return $this->getSerializer()->deserialize($data, $type, $format, $contextType);
     }
 }

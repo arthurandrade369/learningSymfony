@@ -50,24 +50,24 @@ class Book
         return $this->id;
     }
 
-    public function getBookTitle(): ?string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setBookTitle(string $title): self
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getBookAuthor(): ?string
+    public function getAuthor(): ?string
     {
         return $this->author;
     }
 
-    public function setBookAuthor(string $author): self
+    public function setAuthor(string $author): self
     {
         $this->author = $author;
 
@@ -112,8 +112,8 @@ class Book
 
     public function setObject($object): self
     {
-        $this->setBookTitle($object->getBookTitle());
-        $this->setBookAuthor($object->getBookAuthor());
+        $this->setTitle($object->getTitle());
+        $this->setAuthor($object->getAuthor());
         $this->setQuantityPages($object->getQuantityPages());
         $this->setReleaseDate($object->getReleaseDate());
 

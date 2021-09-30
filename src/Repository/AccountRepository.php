@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
@@ -38,11 +39,37 @@ class AccountRepository extends ServiceEntityRepository implements PasswordUpgra
         $this->_em->flush();
     }
 
-    public function getOnlyOne()
+    public function getByEmail($email)
     {
         try {
             return $this->createQueryBuilder('a')
+                ->where('a.email = :email')
+                ->setParameter('email', $email)
                 ->getQuery()->getResult();
+        } catch (Exception $exception) {
+            error_log($exception->getMessage());
+            return null;
+        }
+    }
+
+    public function getOnlyOne($email)
+    {
+        try {
+            $sql = "
+            SELECT
+                a.*
+            FROM
+                account AS a
+            WHERE
+                a.email = :email
+            LIMIT 1";
+
+            $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+            $rsm->addRootEntityFromClassMetadata(Account::class,'a');
+            
+            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+            $query->setParameter('email', $email);            
+            return $query->getResult();
         } catch (Exception $exception) {
             error_log($exception->getMessage());
             return null;
