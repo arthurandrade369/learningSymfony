@@ -23,22 +23,22 @@ class Oauth2Controller extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
 
-        $oauth2 = $this->getObjectPerRequest($request, Oauth2Request::class);
-        if (!$oauth2 instanceof Oauth2Request) {
+        $oauth2Request = $this->getObjectPerRequest($request, Oauth2Request::class);
+        if (!$oauth2Request instanceof Oauth2Request) {
             throw new Exception("Error Processing Request", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        switch ($oauth2->getGrantType()) {
+        switch ($oauth2Request->getGrantType()) {
             case Oauth2Request::GRANT_TYPE_PASSWORD:
 
-                $repo = $em->getRepository(Account::class);
-                if (!$repo instanceof AccountRepository) throw new Exception("Error Processing Repository", Response::HTTP_INTERNAL_SERVER_ERROR);
+                // $repo = $em->getRepository(Account::class);
 
-                $account = $repo->getOnlyOne($oauth2->getUsername());
+                // $account = $repo->findOneBy([
+                //     'email' => $oauth2Request->getUsername(),
+                //     'password' => $oauth2Request->getPassword()
+                // ]);
 
-                if ($account->getPassword() === $oauth2->getPassword()) {
-                    return $this->createToken($request);
-                }
+                $this->createAccessTokenByPassword($request, $oauth2Request);
 
                 break;
             case Oauth2Request::GRANT_TYPE_REFRESH_TOKEN:
@@ -49,15 +49,46 @@ class Oauth2Controller extends AbstractController
                 break;
         }
 
-        return new Response('Invalid credentials', Response::HTTP_NOT_ACCEPTABLE);
+        return $this->createAccessTokenByPassword($request, $oauth2Request);
     }
 
-    public function refreshToken(Request $request)
+    /**
+     * @param Request $request
+     * @param OAuth2Request $oauth2Request
+     * @return OAuth2Response
+     * @throws Exception
+     */
+    public function createAccessTokenByPassword(Request $request, OAuth2Request $oauth2Request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repoUser = $em->getRepository(Account::class);
+
+        // if (empty($oauth2Request->getUsername()) || empty($oauth2Request->getPassword())) {
+        //     AbstractController::errorUnProcessableEntityResponse("username and password is required");
+        // }
+
+        // checks if the user exists
+        $account = $repoUser->findOneBy([
+            'email' => $oauth2Request->getUsername(),
+            'password' => $oauth2Request->getPassword()
+        ]);
+        if (!$account) throw new Exception('Username or password are invalid', Response::HTTP_UNAUTHORIZED);
+        // if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
+
+        // $refreshToken = $this->createRefreshToken($account);
+        // if (!$refreshToken instanceof OAuth2RefreshToken) {
+        //     throw new Exception("Refresh token error", Response::HTTP_INTERNAL_SERVER_ERROR);
+        // }
+
+        return $this->createAccessToken($request, $account);
+    }
+
+    public function createRefreshToken(Request $request)
     {
     }
 
-    public function createToken(Request $request)
+    public function createAccessToken(Request $request, Account $account)
     {
-        return 'Ta dando certo';
+        return new Response('Ta dando certo fml');
     }
 }

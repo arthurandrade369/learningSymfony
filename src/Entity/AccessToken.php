@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\AcessTokenRepository;
+use App\Repository\AccessTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=AcessTokenRepository::class)
- * @ORM\Table(name="acess_token")
+ * @ORM\Entity(repositoryClass=AccessTokenRepository::class)
+ * @ORM\Table(name="access_token")
  */
-class AcessToken
+class AccessToken
 {
     /**
      * @ORM\Id
@@ -21,7 +21,7 @@ class AcessToken
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private string $acessToken;
+    private string $accessToken;
 
     /**
      * @ORM\Column(type="datetime")
@@ -54,14 +54,14 @@ class AcessToken
         return $this->id;
     }
 
-    public function getAcessToken(): ?string
+    public function getAccessToken(): ?string
     {
-        return $this->acessToken;
+        return $this->accessToken;
     }
 
-    public function setAcessToken(string $acessToken): self
+    public function setAccessToken(string $accessToken): self
     {
-        $this->acessToken = $acessToken;
+        $this->accessToken = $accessToken;
 
         return $this;
     }

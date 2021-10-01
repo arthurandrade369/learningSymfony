@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\AcessToken;
+use App\Entity\AccessToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method AcessToken[]    findAll()
  * @method AcessToken[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AcessTokenRepository extends ServiceEntityRepository
+class AccessTokenRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

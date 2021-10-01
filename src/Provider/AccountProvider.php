@@ -74,5 +74,6 @@ class AccountProvider implements UserProviderInterface
     }
 
     public function generateAcessToken()
-    {}
+    {
+    }
 }
