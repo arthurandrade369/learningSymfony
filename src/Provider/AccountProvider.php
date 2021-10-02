@@ -8,9 +8,20 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Exception;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use App\Model\Oauth2Request;
 
 class AccountProvider implements UserProviderInterface
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * Symfony calls this method if you use features like switch_user
      * or remember_me.
@@ -73,7 +84,38 @@ class AccountProvider implements UserProviderInterface
         // 2. update the $user object with $user->setPassword($newEncodedPassword);
     }
 
-    public function generateAcessToken()
+    /**
+     * @param Request $request
+     * @param OAuth2Request $oauth2Request
+     * @return OAuth2Response
+     * @throws Exception
+     */
+    public function createAccessTokenByPassword(Request $request, OAuth2Request $oauth2Request)
     {
+        $repoUser = $this->entityManager->getRepository(Account::class);
+
+        // if (empty($oauth2Request->getUsername()) || empty($oauth2Request->getPassword())) {
+        //     AbstractController::errorUnProcessableEntityResponse("username and password is required");
+        // }
+
+        // checks if the user exists
+        $account = $repoUser->findOneBy([
+            'email' => $oauth2Request->getUsername(),
+            'password' => $oauth2Request->getPassword()
+        ]);
+        if (!$account) throw new Exception('Username or password are invalid', Response::HTTP_UNAUTHORIZED);
+        // if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
+
+        // $refreshToken = $this->createRefreshToken($account);
+        // if (!$refreshToken instanceof OAuth2RefreshToken) {
+        //     throw new Exception("Refresh token error", Response::HTTP_INTERNAL_SERVER_ERROR);
+        // }
+
+        return $this->createAccessToken($request, $account);
+    }
+
+    public function createAccessToken()
+    {
+        return new Response("Ta chegando aqui fml");
     }
 }

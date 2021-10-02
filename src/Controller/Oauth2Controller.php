@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Model\Oauth2Request;
 use App\Repository\AccountRepository;
 use Exception;
+use App\Provider\AccountProvider;
 
 /**
  * @Route("/service/v1/oauth2", name="oauth2_")
@@ -38,7 +39,7 @@ class Oauth2Controller extends AbstractController
                 //     'password' => $oauth2Request->getPassword()
                 // ]);
 
-                $this->createAccessTokenByPassword($request, $oauth2Request);
+                $token = AccountProvider::createAccessTokenByPassword($request, $oauth2Request);
 
                 break;
             case Oauth2Request::GRANT_TYPE_REFRESH_TOKEN:
@@ -49,38 +50,7 @@ class Oauth2Controller extends AbstractController
                 break;
         }
 
-        return $this->createAccessTokenByPassword($request, $oauth2Request);
-    }
-
-    /**
-     * @param Request $request
-     * @param OAuth2Request $oauth2Request
-     * @return OAuth2Response
-     * @throws Exception
-     */
-    public function createAccessTokenByPassword(Request $request, OAuth2Request $oauth2Request)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $repoUser = $em->getRepository(Account::class);
-
-        // if (empty($oauth2Request->getUsername()) || empty($oauth2Request->getPassword())) {
-        //     AbstractController::errorUnProcessableEntityResponse("username and password is required");
-        // }
-
-        // checks if the user exists
-        $account = $repoUser->findOneBy([
-            'email' => $oauth2Request->getUsername(),
-            'password' => $oauth2Request->getPassword()
-        ]);
-        if (!$account) throw new Exception('Username or password are invalid', Response::HTTP_UNAUTHORIZED);
-        // if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
-
-        // $refreshToken = $this->createRefreshToken($account);
-        // if (!$refreshToken instanceof OAuth2RefreshToken) {
-        //     throw new Exception("Refresh token error", Response::HTTP_INTERNAL_SERVER_ERROR);
-        // }
-
-        return $this->createAccessToken($request, $account);
+        return $this->showResponse($request, $token);
     }
 
     public function createRefreshToken(Request $request)
