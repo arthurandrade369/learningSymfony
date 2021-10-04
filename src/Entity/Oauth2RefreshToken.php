@@ -7,15 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=RefreshTokenRepository::class)
- * @ORM\Table(name="refresh_token")
+ * @ORM\Table(name="oauth2_refresh_token")
  */
-class RefreshToken
+class Oauth2RefreshToken
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="AcessToken", mappedBy="refreshToken")
+     * @ORM\OneToMany(targetEntity="App\Entity\Oauth2AcessToken", mappedBy="refreshToken")
      */
     private int $id;
 
@@ -40,7 +40,7 @@ class RefreshToken
     private \DateTime $expirationAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Account", inversedBy="id")
      * @ORM\Column(type="integer")
      */
     private $account;

@@ -32,14 +32,7 @@ class Oauth2Controller extends AbstractController
         switch ($oauth2Request->getGrantType()) {
             case Oauth2Request::GRANT_TYPE_PASSWORD:
 
-                // $repo = $em->getRepository(Account::class);
-
-                // $account = $repo->findOneBy([
-                //     'email' => $oauth2Request->getUsername(),
-                //     'password' => $oauth2Request->getPassword()
-                // ]);
-
-                $token = AccountProvider::createAccessTokenByPassword($request, $oauth2Request);
+                $token = $this->getAccountProvider()->createAccessTokenByPassword($request, $oauth2Request);
 
                 break;
             case Oauth2Request::GRANT_TYPE_REFRESH_TOKEN:
@@ -50,7 +43,7 @@ class Oauth2Controller extends AbstractController
                 break;
         }
 
-        return $this->showResponse($request, $token);
+        return $this->abstractResponse($token);
     }
 
     public function createRefreshToken(Request $request)

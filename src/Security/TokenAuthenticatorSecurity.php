@@ -8,13 +8,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
 {
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em)
     {
@@ -28,7 +29,8 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return $request->headers->has('Authorization');
+        if($request->headers->has('Authorization')) return true;
+        throw new CustomUserMessageAuthenticationException("Undefined Token",[] ,Response::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -37,7 +39,11 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        return $request->headers->get('Authorization');
+        if(!$request->headers->get('Authorization')) $token = null;
+        
+        return array(
+            'token' => $token
+        );
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface

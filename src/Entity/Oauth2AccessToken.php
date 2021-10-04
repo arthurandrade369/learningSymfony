@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use App\Repository\AccessTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @ORM\Entity(repositoryClass=AccessTokenRepository::class)
- * @ORM\Table(name="access_token")
+ * @ORM\Table(name="oauth2_access_token")
  */
-class AccessToken
+class Oauth2AccessToken
 {
     /**
      * @ORM\Id
@@ -45,7 +47,7 @@ class AccessToken
 
     /**
      * @ORM\Column(type="integer")
-     * @ORM\ManyToOne(targetEntity="RefreshToken", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Oauth2RefreshToken", inversedBy="id")
      */
     private $refreshToken;
 

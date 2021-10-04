@@ -17,7 +17,7 @@ class Account implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="RefreshToken", mappedBy="account")
+     * @ORM\OneToMany(targetEntity="App\Entity\Oauth2RefreshToken", mappedBy="account")
      */
     private int $id;
     
@@ -136,7 +136,7 @@ class Account implements UserInterface
      */
     public function getSalt(): ?string
     {
-        return null;
+        return ("HowMuchIs1000-7?");
     }
 
     /**

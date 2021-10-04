@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
+use App\Provider\AccountProvider;
 use Exception;
 use JMS\Serializer\DeserializationContext;
+use JMS\Serializer\SerializationContext;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,10 +16,12 @@ use JMS\Serializer\SerializerInterface;
 class AbstractController extends BaseController
 {
     private SerializerInterface $serializer;
+    private AccountProvider $accountProvider;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, AccountProvider $accountProvider)
     {
         $this->serializer = $serializer;
+        $this->accountProvider = $accountProvider;
     }
 
     /**
@@ -25,6 +30,15 @@ class AbstractController extends BaseController
     public function getSerializer(): SerializerInterface
     {
         return $this->serializer;
+    }
+
+    /**
+     * Get the value of accountProvider
+     * @return AccountProvider
+     */
+    public function getAccountProvider()
+    {
+        return $this->accountProvider;
     }
 
     /**
@@ -121,15 +135,34 @@ class AbstractController extends BaseController
         return $this->getSerializer()->serialize($body, 'json');
     }
 
-    public function serializer($data, $contextType = null)
+    public function serializer($data, $contextGroup = null)
     {
         $format = 'json';
-        return $this->getSerializer()->serialize($data, $format, $contextType);
+        $context = null;
+
+        if ($contextGroup) {
+            $context = SerializationContext::create();
+            $context->setGroups($contextGroup);
+        }
+
+        return $this->getSerializer()->serialize($data, $format, $context);
     }
 
-    public function deserializer($data, $type, $contextType = null)
+    public function deserializer($data, $type, $contextGroup = null)
     {
         $format = 'json';
-        return $this->getSerializer()->deserialize($data, $type, $format, $contextType);
+        $context = null;
+
+        if ($contextGroup) {
+            $context = DeserializationContext::create();
+            $context->setGroups($contextGroup);
+        }
+
+        return $this->getSerializer()->deserialize($data, $type, $format, $context);
+    }
+
+    public function abstractResponse($data, $contextGroup = null)
+    {
+        return new Response($this->serializer($data, $contextGroup));
     }
 }

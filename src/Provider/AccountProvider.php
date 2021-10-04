@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Model\Oauth2Request;
+use Symfony\Component\Security\Guard\Token\PreAuthenticationGuardToken;
 
 class AccountProvider implements UserProviderInterface
 {
@@ -114,8 +115,9 @@ class AccountProvider implements UserProviderInterface
         return $this->createAccessToken($request, $account);
     }
 
-    public function createAccessToken()
+    public function createAccessToken(Request $request, Account $account)
     {
-        return new Response("Ta chegando aqui fml");
+        $token = random_bytes(10);
+        return $token;
     }
 }
