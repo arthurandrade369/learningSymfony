@@ -7,15 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=RefreshTokenRepository::class)
- * @ORM\Table(name="oauth2_refresh_token")
+ * @ORM\Table(name="OAuth2_refresh_token")
  */
-class Oauth2RefreshToken
+class OAuth2RefreshToken
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="App\Entity\Oauth2AcessToken", mappedBy="refreshToken")
+     * @ORM\OneToMany(targetEntity="App\Entity\OAuth2AcessToken", mappedBy="refreshToken")
      */
     private int $id;
 
@@ -43,7 +43,7 @@ class Oauth2RefreshToken
      * @ORM\ManyToOne(targetEntity="App\Entity\Account", inversedBy="id")
      * @ORM\Column(type="integer")
      */
-    private $account;
+    private Account $account;
 
     public function getId(): ?int
     {
@@ -98,12 +98,12 @@ class Oauth2RefreshToken
         return $this;
     }
 
-    public function getAccount(): ?int
+    public function getAccount(): ?Account
     {
         return $this->account;
     }
 
-    public function setAccount(int $account): self
+    public function setAccount(Account $account): self
     {
         $this->account = $account;
 

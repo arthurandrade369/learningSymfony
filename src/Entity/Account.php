@@ -17,7 +17,7 @@ class Account implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="App\Entity\Oauth2RefreshToken", mappedBy="account")
+     * @ORM\OneToMany(targetEntity="App\Entity\OAuth2RefreshToken", mappedBy="account")
      */
     private int $id;
     

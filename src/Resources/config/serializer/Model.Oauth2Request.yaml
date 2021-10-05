@@ -1,4 +1,4 @@
-App\Model\Oauth2Request:
+App\Model\OAuth2Request:
   exclusion_policy: All
   properties:
     username:

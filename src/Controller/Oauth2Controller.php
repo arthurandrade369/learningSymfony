@@ -7,7 +7,7 @@ use App\Entity\Account;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Model\Oauth2Request;
+use App\Model\OAuth2Request;
 use App\Repository\AccountRepository;
 use Exception;
 use App\Provider\AccountProvider;
@@ -15,7 +15,7 @@ use App\Provider\AccountProvider;
 /**
  * @Route("/service/v1/oauth2", name="oauth2_")
  */
-class Oauth2Controller extends AbstractController
+class OAuth2Controller extends AbstractController
 {
     /**
      * @Route("", name="login")
@@ -24,18 +24,18 @@ class Oauth2Controller extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
 
-        $oauth2Request = $this->getObjectPerRequest($request, Oauth2Request::class);
-        if (!$oauth2Request instanceof Oauth2Request) {
+        $OAuth2Request = $this->getObjectPerRequest($request, OAuth2Request::class);
+        if (!$OAuth2Request instanceof OAuth2Request) {
             throw new Exception("Error Processing Request", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        switch ($oauth2Request->getGrantType()) {
-            case Oauth2Request::GRANT_TYPE_PASSWORD:
+        switch ($OAuth2Request->getGrantType()) {
+            case OAuth2Request::GRANT_TYPE_PASSWORD:
 
-                $token = $this->getAccountProvider()->createAccessTokenByPassword($request, $oauth2Request);
+                $token = $this->getAccountProvider()->createAccessTokenByPassword($request, $OAuth2Request);
 
                 break;
-            case Oauth2Request::GRANT_TYPE_REFRESH_TOKEN:
+            case OAuth2Request::GRANT_TYPE_REFRESH_TOKEN:
                 # code...
                 break;
             default:
@@ -44,14 +44,5 @@ class Oauth2Controller extends AbstractController
         }
 
         return $this->abstractResponse($token);
-    }
-
-    public function createRefreshToken(Request $request)
-    {
-    }
-
-    public function createAccessToken(Request $request, Account $account)
-    {
-        return new Response('Ta dando certo fml');
     }
 }

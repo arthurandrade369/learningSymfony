@@ -9,9 +9,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @ORM\Entity(repositoryClass=AccessTokenRepository::class)
- * @ORM\Table(name="oauth2_access_token")
+ * @ORM\Table(name="OAuth2_access_token")
  */
-class Oauth2AccessToken
+class OAuth2AccessToken
 {
     /**
      * @ORM\Id
@@ -47,9 +47,9 @@ class Oauth2AccessToken
 
     /**
      * @ORM\Column(type="integer")
-     * @ORM\ManyToOne(targetEntity="App\Entity\Oauth2RefreshToken", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="App\Entity\OAuth2RefreshToken", inversedBy="id")
      */
-    private $refreshToken;
+    private OAuth2RefreshToken $refreshToken;
 
     public function getId(): ?int
     {
@@ -116,12 +116,12 @@ class Oauth2AccessToken
         return $this;
     }
 
-    public function getRefreshToken(): ?int
+    public function getRefreshToken(): ?OAuth2RefreshToken
     {
         return $this->refreshToken;
     }
 
-    public function setRefreshToken(int $refreshToken): self
+    public function setRefreshToken(OAuth2RefreshToken $refreshToken): self
     {
         $this->refreshToken = $refreshToken;
 

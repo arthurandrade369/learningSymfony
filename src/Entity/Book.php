@@ -35,15 +35,15 @@ class Book
     private int $quantityPages;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="integer")
      */
-    private \DateTime $releaseDate;
+    private int $releaseDate;
 
     /**
      * @ORM\ManyToOne(targetEntity="Publisher")
      * @ORM\Column(type="integer", name="publisher_id")
      */
-    private $publisher;
+    private Publisher $publisher;
 
     public function getId(): ?int
     {
@@ -86,24 +86,24 @@ class Book
         return $this;
     }
 
-    public function getReleaseDate(): ?\DateTimeInterface
+    public function getReleaseDate(): ?int
     {
         return $this->releaseDate;
     }
 
-    public function setReleaseDate(\DateTimeInterface $releaseDate): self
+    public function setReleaseDate(int $releaseDate): self
     {
         $this->releaseDate = $releaseDate;
 
         return $this;
     }
 
-    public function getPublisher(): ?int
+    public function getPublisher(): ?Publisher
     {
         return $this->publisher;
     }
 
-    public function setPublisher(int $publisher): self
+    public function setPublisher(Publisher $publisher): self
     {
         $this->publisher = $publisher;
 

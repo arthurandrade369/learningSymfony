@@ -14,12 +14,14 @@ security:
             anonymous: ~
             provider: app_account_provider
             pattern: '^/service/v1/'
-            security: false
+            security: true
             stateless: true
             guard:
                 authenticators:
                     - App\Security\TokenAuthenticatorSecurity       
     access_control:
         - { path: ^/service/v1/oauth2, methods: [POST], roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/service/v1/oauth2,  methods: [GET, DELETE], roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/service/v1/oauth2, methods: [GET, DELETE], roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/service/v1/book, methods: [POST, PUT, DELETE], roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/service/v1/publisher, methods: [POST, PUT, DELETE], roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/service/v1/, roles: IS_AUTHENTICATED_FULLY }

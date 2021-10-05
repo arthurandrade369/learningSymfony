@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class Oauth2Request
+class OAuth2Request
 {
     public const GRANT_TYPE_REFRESH_TOKEN = 'refreshToken';
     public const GRANT_TYPE_PASSWORD = 'password';

@@ -29,8 +29,8 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        if($request->headers->has('Authorization')) return true;
-        throw new CustomUserMessageAuthenticationException("Undefined Token",[] ,Response::HTTP_UNAUTHORIZED);
+        return $request->headers->has('Authorization')
+            && 0 === strpos($request->headers->get('Authorization'), 'Bearer');
     }
 
     /**
@@ -39,11 +39,10 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        if(!$request->headers->get('Authorization')) $token = null;
-        
-        return array(
-            'token' => $token
-        );
+        $authorizationHeader = $request->headers->get('Authorization');
+
+        // Skip after the "Bearer", returning just the token
+        return substr($authorizationHeader, 7);
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface

@@ -2,7 +2,10 @@
 
 namespace App\Provider;
 
+use App\Controller\AbstractController;
 use App\Entity\Account;
+use App\Entity\OAuth2AccessToken;
+use App\Entity\OAuth2RefreshToken;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,49 +14,35 @@ use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Model\Oauth2Request;
-use Symfony\Component\Security\Guard\Token\PreAuthenticationGuardToken;
+use App\Model\OAuth2Request;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class AccountProvider implements UserProviderInterface
 {
     private EntityManagerInterface $entityManager;
+    private TokenGeneratorInterface $tokenGenerator;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, TokenGeneratorInterface $tokenGenerator)
     {
         $this->entityManager = $entityManager;
+        $this->tokenGenerator = $tokenGenerator;
+    }
+
+    public function generateToken()
+    {
+        return $this->tokenGenerator->generateToken();
     }
 
     /**
-     * Symfony calls this method if you use features like switch_user
-     * or remember_me.
-     *
-     * If you're not using these features, you do not need to implement
-     * this method.
-     *
      * @return UserInterface
-     *
      * @throws UsernameNotFoundException if the user is not found
      */
     public function loadUserByUsername($username)
     {
-        // Load a User object from your data source or throw UsernameNotFoundException.
-        // The $username argument may not actually be a username:
-        // it is whatever value is being returned by the getUsername()
-        // method in your User class.
         throw new Exception('TODO: fill in loadUserByUsername() inside ' . __FILE__);
     }
 
     /**
-     * Refreshes the user after being reloaded from the session.
-     *
-     * When a user is logged in, at the beginning of each request, the
-     * User object is loaded from the session and then this method is
-     * called. Your job is to make sure the user's data is still fresh by,
-     * for example, re-querying for fresh User data.
-     *
-     * If your firewall is "stateless: true" (for a pure API), this
-     * method is not called.
-     *
      * @return UserInterface
      */
     public function refreshUser(UserInterface $user)
@@ -62,62 +51,79 @@ class AccountProvider implements UserProviderInterface
             throw new UnsupportedUserException(sprintf('Invalid user class "%s".', get_class($user)));
         }
 
-        // Return a User object after making sure its data is "fresh".
-        // Or throw a UsernameNotFoundException if the user no longer exists.
         throw new Exception('TODO: fill in refreshUser() inside ' . __FILE__);
     }
 
-    /**
-     * Tells Symfony to use this provider for this User class.
-     */
     public function supportsClass($class)
     {
         return Account::class === $class || is_subclass_of($class, Account::class);
     }
 
-    /**
-     * Upgrades the encoded password of a user, typically for using a better hash algorithm.
-     */
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
     {
-        // TODO: when encoded passwords are in use, this method should:
-        // 1. persist the new password in the user storage
-        // 2. update the $user object with $user->setPassword($newEncodedPassword);
+
     }
 
     /**
      * @param Request $request
-     * @param OAuth2Request $oauth2Request
+     * @param OAuth2Request $OAuth2Request
      * @return OAuth2Response
      * @throws Exception
      */
-    public function createAccessTokenByPassword(Request $request, OAuth2Request $oauth2Request)
+    public function createAccessTokenByPassword(Request $request, OAuth2Request $OAuth2Request)
     {
         $repoUser = $this->entityManager->getRepository(Account::class);
 
-        // if (empty($oauth2Request->getUsername()) || empty($oauth2Request->getPassword())) {
+        if (empty($OAuth2Request->getUsername()) || empty($OAuth2Request->getPassword())) {
         //     AbstractController::errorUnProcessableEntityResponse("username and password is required");
-        // }
+            throw new Exception("Username and Password is required", Response::HTTP_BAD_REQUEST);
+        }
 
         // checks if the user exists
         $account = $repoUser->findOneBy([
-            'email' => $oauth2Request->getUsername(),
-            'password' => $oauth2Request->getPassword()
+            'email' => $OAuth2Request->getUsername(),
+            'password' => md5($OAuth2Request->getPassword())
         ]);
         if (!$account) throw new Exception('Username or password are invalid', Response::HTTP_UNAUTHORIZED);
         // if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
 
-        // $refreshToken = $this->createRefreshToken($account);
-        // if (!$refreshToken instanceof OAuth2RefreshToken) {
-        //     throw new Exception("Refresh token error", Response::HTTP_INTERNAL_SERVER_ERROR);
-        // }
+        $refreshToken = $this->createRefreshToken($account);
+        if (!$refreshToken instanceof OAuth2RefreshToken) {
+            throw new Exception("Refresh token error", Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
-        return $this->createAccessToken($request, $account);
+        return $this->createAccessToken($request, $refreshToken);
     }
 
-    public function createAccessToken(Request $request, Account $account)
+    public function createAccessToken(Request $request, OAuth2RefreshToken $refreshToken)
     {
-        $token = random_bytes(10);
+        $token = new OAuth2AccessToken();
+
+        $token->setAccessToken($refreshToken->getId().'_'. $this->generateToken());
+        $token->setCreatedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
+        $token->setModifiedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
+        $token->setExpirationAt(new \DateTime('+60 minutes', new \DateTimeZone('America/Sao_Paulo')));
+        $token->setTypeToken('Bearer');
+        $token->setRefreshToken($refreshToken);
+
+        $this->entityManager->persist($token);
+        $this->entityManager->flush();
+
         return $token;
+    }
+
+    public function createRefreshToken(Account $account)
+    {
+        $refreshToken = new OAuth2RefreshToken;
+        $refreshToken->setRefreshToken($account->getId().'_'.$this->generateToken());
+        $refreshToken->setCreatedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
+        $refreshToken->setModifiedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
+        $refreshToken->setExpirationAt(new \DateTime('+30 minutes', new \DateTimeZone('America/Sao_Paulo')));
+        $refreshToken->setAccount($account);
+
+        $this->entityManager->persist($refreshToken);
+        $this->entityManager->flush();
+
+        return $refreshToken;
     }
 }
