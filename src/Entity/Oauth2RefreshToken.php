@@ -40,7 +40,7 @@ class OAuth2RefreshToken
     private \DateTime $expirationAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Account", inversedBy="id")
+     * @ORM\OneToOne(targetEntity="App\Entity\Account", inversedBy="id")
      * @ORM\Column(type="integer")
      */
     private Account $account;

@@ -5,7 +5,7 @@ security:
     providers:
         app_account_provider:
             entity:
-                class: 'App\Provider\AccountProvider'
+                class: App\Provider\AccountProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

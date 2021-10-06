@@ -2,6 +2,8 @@
 namespace App\Security;
 
 use App\Entity\Account;
+use App\Provider\AccountProvider;
+use App\Repository\OAuth2AccessTokenRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,11 +17,26 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
 {
-    private EntityManagerInterface $em;
+    private ?string $token;
+    private ?string $tokenType;
+    private AccountProvider $accountProvider;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(AccountProvider $accountProvider)
     {
-        $this->em = $em;
+        $this->accountProvider = $accountProvider;
+    }
+
+    public function getAccountProvider(): AccountProvider
+    {
+        return $this->accountProvider;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAuthorizedIp(): array
+    {
+        return ['127.0.0.1', 'localhost'];
     }
 
     /**
@@ -30,7 +47,7 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
     public function supports(Request $request): bool
     {
         return $request->headers->has('Authorization')
-            && 0 === strpos($request->headers->get('Authorization'), 'Bearer');
+            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ');
     }
 
     /**

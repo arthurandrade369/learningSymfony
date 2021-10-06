@@ -1,8 +1,6 @@
 <?php
-
 namespace App\Provider;
 
-use App\Controller\AbstractController;
 use App\Entity\Account;
 use App\Entity\OAuth2AccessToken;
 use App\Entity\OAuth2RefreshToken;
@@ -28,7 +26,7 @@ class AccountProvider implements UserProviderInterface
         $this->tokenGenerator = $tokenGenerator;
     }
 
-    public function generateToken()
+    public function generateToken(): string
     {
         return $this->tokenGenerator->generateToken();
     }
@@ -39,6 +37,7 @@ class AccountProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
+        return 'Ta chegando aqui';
         throw new Exception('TODO: fill in loadUserByUsername() inside ' . __FILE__);
     }
 

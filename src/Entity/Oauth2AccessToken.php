@@ -47,7 +47,7 @@ class OAuth2AccessToken
 
     /**
      * @ORM\Column(type="integer")
-     * @ORM\ManyToOne(targetEntity="App\Entity\OAuth2RefreshToken", inversedBy="id")
+     * @ORM\OneToOne(targetEntity="App\Entity\OAuth2RefreshToken", inversedBy="id")
      */
     private OAuth2RefreshToken $refreshToken;
 
