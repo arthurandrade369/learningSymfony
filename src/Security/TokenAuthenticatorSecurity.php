@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Security;
 
+use App\Controller\AbstractController;
 use App\Entity\Account;
-use App\Provider\AccountProvider;
+use App\Provider\AccountUserProvider;
 use App\Repository\OAuth2AccessTokenRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,16 +21,16 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
 {
     private ?string $token;
     private ?string $tokenType;
-    private AccountProvider $accountProvider;
+    private AccountUserProvider $AccountUserProvider;
 
-    public function __construct(AccountProvider $accountProvider)
+    public function __construct(AccountUserProvider $AccountUserProvider)
     {
-        $this->accountProvider = $accountProvider;
+        $this->AccountUserProvider = $AccountUserProvider;
     }
 
-    public function getAccountProvider(): AccountProvider
+    public function getAccountUserProvider(): AccountUserProvider
     {
-        return $this->accountProvider;
+        return $this->AccountUserProvider;
     }
 
     /**
@@ -46,39 +48,67 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return $request->headers->has('Authorization')
-            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ');
+        if (in_array($request->getClientIp(), TokenAuthenticatorSecurity::getAuthorizedIp())) {
+            return true;
+        }
+
+        if ($request->headers->has('Authorization')) {
+            $this->token = $request->headers->get('Authorization');
+            $patternBearer = "/bearer .+/i";
+
+            if (preg_match_all($patternBearer, $this->token)) {
+                $this->tokenType = 'Bearer';
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
 
     /**
      * Called on every request. Return whatever credentials you want to
      * be passed to getUser() as $credentials.
      */
-    public function getCredentials(Request $request)
+    public function getCredentials(Request $request): array
     {
-        $authorizationHeader = $request->headers->get('Authorization');
+        $this->token = AbstractController::separateAuthorization($this->token);
+        echo($this->token);die;
+        $token = AbstractController::separateToken($this->token);
 
-        // Skip after the "Bearer", returning just the token
-        return substr($authorizationHeader, 7);
+        return array(
+            'tokenId' => $token[0],
+            'token' => $token[1],
+            'tokenType' => $this->tokenType,
+            'adress' => $request->getClientIp()
+        );
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
-        if (null === $credentials) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
+        $tokenId = $credentials['tokenId'];
+        $token = $credentials['token'];
+        $tokenType = $credentials['tokenType'];
+        $address = $credentials['address'];
+
+        if($token === null && !in_array($address, TokenAuthenticatorSecurity::getAuthorizedIp()))
+        {
             return null;
         }
 
-        // The "username" in this case is the apiToken, see the key `property`
-        // of `your_db_provider` in `security.yaml`.
-        // If this returns a user, checkCredentials() is called next:
-        return $userProvider->loadUserByUsername($credentials);
+        $tokenType = strtolower($tokenType);
+        switch ($tokenType) {
+            case 'bearer':
+                return $this->getAccountUserProvider()->getByAccessToken($token, $tokenId, $address);
+            default:
+                return null;
+        }
     }
 
     public function checkCredentials($credentials, UserInterface $user): bool
     {
-        return $credentials['password'] === $user->getPassword();
+        return true;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response

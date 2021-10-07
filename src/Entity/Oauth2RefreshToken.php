@@ -15,7 +15,7 @@ class OAuth2RefreshToken
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="App\Entity\OAuth2AcessToken", mappedBy="refreshToken")
+     * @ORM\OneToMany(targetEntity="App\Entity\OAuth2AcessToken", mappedBy="refreshToken", cascade={"remove"})
      */
     private int $id;
 

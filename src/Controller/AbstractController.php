@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Account;
-use App\Provider\AccountProvider;
+use App\Provider\AccountUserProvider;
 use Exception;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\SerializationContext;
@@ -16,12 +16,12 @@ use JMS\Serializer\SerializerInterface;
 class AbstractController extends BaseController
 {
     private SerializerInterface $serializer;
-    private AccountProvider $accountProvider;
+    private AccountUserProvider $accountUserProvider;
 
-    public function __construct(SerializerInterface $serializer, AccountProvider $accountProvider)
+    public function __construct(SerializerInterface $serializer, AccountUserProvider $accountUserProvider)
     {
         $this->serializer = $serializer;
-        $this->accountProvider = $accountProvider;
+        $this->accountUserProvider = $accountUserProvider;
     }
 
     /**
@@ -33,12 +33,12 @@ class AbstractController extends BaseController
     }
 
     /**
-     * Get the value of accountProvider
-     * @return AccountProvider
+     * Get the value of AccountUserProvider
+     * @return AccountUserProvider
      */
-    public function getAccountProvider()
+    public function getAccountUserProvider(): AccountUserProvider
     {
-        return $this->accountProvider;
+        return $this->accountUserProvider;
     }
 
     /**
@@ -164,5 +164,14 @@ class AbstractController extends BaseController
     public function abstractResponse($data, $contextGroup = null)
     {
         return new Response($this->serializer($data, $contextGroup));
+    }
+
+    public static function separateAuthorization($token)
+    {
+        return strpos($token,7);
+    }
+
+    public static function separateToken($token)
+    {
     }
 }

@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Model\OAuth2Request;
 use App\Repository\AccountRepository;
 use Exception;
-use App\Provider\AccountProvider;
+use App\Provider\AccountUserProvider;
 
 /**
  * @Route("/service/v1/oauth2", name="oauth2_")
@@ -32,7 +32,7 @@ class OAuth2Controller extends AbstractController
         switch ($OAuth2Request->getGrantType()) {
             case OAuth2Request::GRANT_TYPE_PASSWORD:
 
-                $token = $this->getAccountProvider()->createAccessTokenByPassword($request, $OAuth2Request);
+                $token = $this->getAccountUserProvider()->createAccessTokenByPassword($request, $OAuth2Request);
 
                 break;
             case OAuth2Request::GRANT_TYPE_REFRESH_TOKEN:

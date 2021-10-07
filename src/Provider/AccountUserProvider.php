@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Model\OAuth2Request;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
-class AccountProvider implements UserProviderInterface
+class AccountUserProvider implements UserProviderInterface
 {
     private EntityManagerInterface $entityManager;
     private TokenGeneratorInterface $tokenGenerator;
@@ -124,5 +124,10 @@ class AccountProvider implements UserProviderInterface
         $this->entityManager->flush();
 
         return $refreshToken;
+    }
+
+    public function getByAccessToken($token, $tokenId, $address)
+    {
+
     }
 }
