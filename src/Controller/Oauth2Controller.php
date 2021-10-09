@@ -43,6 +43,6 @@ class OAuth2Controller extends AbstractController
                 break;
         }
 
-        return $this->abstractResponse($token);
+        return $this->abstractResponse($request, $token);
     }
 }

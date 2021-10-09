@@ -48,9 +48,9 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        if (in_array($request->getClientIp(), TokenAuthenticatorSecurity::getAuthorizedIp())) {
-            return true;
-        }
+        // if (in_array($request->getClientIp(), TokenAuthenticatorSecurity::getAuthorizedIp())) {
+        //     return true;
+        // }
 
         if ($request->headers->has('Authorization')) {
             $this->token = $request->headers->get('Authorization');
@@ -74,14 +74,13 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
     public function getCredentials(Request $request): array
     {
         $this->token = AbstractController::separateAuthorization($this->token);
-        echo($this->token);die;
         $token = AbstractController::separateToken($this->token);
-
+        
         return array(
             'tokenId' => $token[0],
             'token' => $token[1],
             'tokenType' => $this->tokenType,
-            'adress' => $request->getClientIp()
+            'address' => $request->getClientIp()
         );
     }
 

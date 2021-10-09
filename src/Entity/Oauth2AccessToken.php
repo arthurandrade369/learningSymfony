@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\AccessTokenRepository;
+use App\Repository\OAuth2AccessTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
- * @ORM\Entity(repositoryClass=AccessTokenRepository::class)
- * @ORM\Table(name="OAuth2_access_token")
+ * @ORM\Entity(repositoryClass=OAuth2AccessTokenRepository::class)
+ * @ORM\Table(name="oauth2_access_token")
  */
 class OAuth2AccessToken
 {

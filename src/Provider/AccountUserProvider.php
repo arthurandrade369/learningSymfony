@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Provider;
 
+use App\Controller\AbstractController;
 use App\Entity\Account;
 use App\Entity\OAuth2AccessToken;
 use App\Entity\OAuth2RefreshToken;
@@ -13,6 +15,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Model\OAuth2Request;
+use App\Repository\AccountRepository;
+use App\Repository\OAuth2AccessTokenRepository;
+use App\Security\TokenAuthenticatorSecurity;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class AccountUserProvider implements UserProviderInterface
@@ -60,7 +65,6 @@ class AccountUserProvider implements UserProviderInterface
 
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
     {
-
     }
 
     /**
@@ -74,7 +78,7 @@ class AccountUserProvider implements UserProviderInterface
         $repoUser = $this->entityManager->getRepository(Account::class);
 
         if (empty($OAuth2Request->getUsername()) || empty($OAuth2Request->getPassword())) {
-        //     AbstractController::errorUnProcessableEntityResponse("username and password is required");
+            //     AbstractController::errorUnProcessableEntityResponse("username and password is required");
             throw new Exception("Username and Password is required", Response::HTTP_BAD_REQUEST);
         }
 
@@ -98,10 +102,8 @@ class AccountUserProvider implements UserProviderInterface
     {
         $token = new OAuth2AccessToken();
 
-        $token->setAccessToken($refreshToken->getId().'_'. $this->generateToken());
-        $token->setCreatedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
-        $token->setModifiedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
-        $token->setExpirationAt(new \DateTime('+60 minutes', new \DateTimeZone('America/Sao_Paulo')));
+        $token->setAccessToken($this->generateToken());
+        $token->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
         $token->setTypeToken('Bearer');
         $token->setRefreshToken($refreshToken);
 
@@ -114,10 +116,8 @@ class AccountUserProvider implements UserProviderInterface
     public function createRefreshToken(Account $account)
     {
         $refreshToken = new OAuth2RefreshToken;
-        $refreshToken->setRefreshToken($account->getId().'_'.$this->generateToken());
-        $refreshToken->setCreatedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
-        $refreshToken->setModifiedAt(new \DateTime('now', new \DateTimeZone('America/Sao_Paulo')));
-        $refreshToken->setExpirationAt(new \DateTime('+30 minutes', new \DateTimeZone('America/Sao_Paulo')));
+        $refreshToken->setRefreshToken($this->generateToken());
+        $refreshToken->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
         $refreshToken->setAccount($account);
 
         $this->entityManager->persist($refreshToken);
@@ -128,6 +128,17 @@ class AccountUserProvider implements UserProviderInterface
 
     public function getByAccessToken($token, $tokenId, $address)
     {
+        $repoAccessToken = $this->entityManager->getRepository(Account::class);
+        if (!$repoAccessToken instanceof AccountRepository) return null;
 
+        $account = $repoAccessToken->getUserByAccessToken($token, $tokenId);
+        if ($account instanceof Account) {
+            return $account;
+        }
+        if (!in_array($address, ['This is a test'])) {
+            return null;
+        }
+
+        return $this->entityManager->getRepository(Account::class)->find(1);
     }
 }

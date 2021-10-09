@@ -9,6 +9,8 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class DoctrineEventListener implements EventSubscriberInterface
 {
+    public const BRT = 'America/Sao_Paulo';
+
     /**
      * This method can only return th event names; you cannot define a
      * custom method name to execute when each event triggers
@@ -46,10 +48,20 @@ class DoctrineEventListener implements EventSubscriberInterface
     {
         $entity = $args->getObject();
 
-        // if this subscriber only applies to certain entity types,
-        // add some code to check the entity type as early as possible
-        if (!$entity instanceof Account) {
-            return;
+        if ($action === 'persist') {
+            if (property_exists($entity, 'createAt') && property_exists($entity, 'modifiedAt')) {
+                $entity->setCreatedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
+                $entity->setModifiedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
+            }
+            if ($entity instanceof Account) {
+                if (property_exists($entity, 'plainPassword')) {
+                    $entity->setPassword(md5($entity->getPlainPassword()));
+                }
+            }
+        } else if ($action === 'update') {
+            if (property_exists($entity, 'modifiedAt')) {
+                $entity->setModifiedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
+            }
         }
     }
 }

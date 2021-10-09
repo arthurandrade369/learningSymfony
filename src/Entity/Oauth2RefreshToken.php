@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\RefreshTokenRepository;
+use App\Repository\OAuth2RefreshTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=RefreshTokenRepository::class)
- * @ORM\Table(name="OAuth2_refresh_token")
+ * @ORM\Entity(repositoryClass=OAuth2RefreshTokenRepository::class)
+ * @ORM\Table(name="oauth2_refresh_token")
  */
 class OAuth2RefreshToken
 {

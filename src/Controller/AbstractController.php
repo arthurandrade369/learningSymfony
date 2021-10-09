@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseControll
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use JMS\Serializer\SerializerInterface;
-
+use PhpParser\Node\Stmt\Return_;
 
 class AbstractController extends BaseController
 {
@@ -46,10 +46,10 @@ class AbstractController extends BaseController
      *
      * @param Request $request
      * @param string $entity
-     * @param [type] $contextType
+     * @param ?string $contextGroup
      * @return mixed
      */
-    public function getObjectPerRequest(Request $request, string $entity, $contextGroup = null)
+    public function getObjectPerRequest(Request $request, string $entity, ?string $contextGroup = null)
     {
         $format = 'json';
 
@@ -135,6 +135,13 @@ class AbstractController extends BaseController
         return $this->getSerializer()->serialize($body, 'json');
     }
 
+    public function abstractResponse(Request $request, $data, $contextGroup = null)
+    {
+        $reponse = new Response($this->serializer($data, $contextGroup));
+        $reponse->headers->set('Content-Type', 'application/json');
+        return new Response($this->serializer($data, $contextGroup));
+    }
+
     public function serializer($data, $contextGroup = null)
     {
         $format = 'json';
@@ -148,7 +155,7 @@ class AbstractController extends BaseController
         return $this->getSerializer()->serialize($data, $format, $context);
     }
 
-    public function deserializer($data, $type, $contextGroup = null)
+    public function deserializer($data, $entity, $contextGroup = null)
     {
         $format = 'json';
         $context = null;
@@ -158,20 +165,22 @@ class AbstractController extends BaseController
             $context->setGroups($contextGroup);
         }
 
-        return $this->getSerializer()->deserialize($data, $type, $format, $context);
-    }
-
-    public function abstractResponse($data, $contextGroup = null)
-    {
-        return new Response($this->serializer($data, $contextGroup));
+        return $this->getSerializer()->deserialize($data, $entity, $format, $context);
     }
 
     public static function separateAuthorization($token)
     {
-        return strpos($token,7);
+        $varToken = explode(' ', $token, 2);
+
+        return $varToken[1];
     }
 
     public static function separateToken($token)
     {
+        $varToken = explode('_', $token); 
+        
+        if(!$varToken[0] && $varToken[1]) return null;
+
+        return $varToken;
     }
 }
