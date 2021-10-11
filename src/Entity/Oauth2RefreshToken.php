@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Account;
 use App\Repository\OAuth2RefreshTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -13,35 +14,34 @@ class OAuth2RefreshToken
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="App\Entity\OAuth2AcessToken", mappedBy="refreshToken", cascade={"remove"})
      */
     private int $id;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, name="refresh_token")
      */
     private string $refreshToken;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="created_at")
      */
     private \DateTime $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="modified_at")
      */
     private \DateTime $modifiedAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="expiration_at")
      */
     private \DateTime $expirationAt;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Account", inversedBy="id")
-     * @ORM\Column(type="integer")
+     * @ORM\OneToOne(targetEntity=Account::class)
+     * @ORM\JoinColumn(name="account_id")
      */
     private Account $account;
 

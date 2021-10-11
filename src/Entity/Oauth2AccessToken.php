@@ -15,39 +15,39 @@ class OAuth2AccessToken
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
      */
     private int $id;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, name="access_token")
      */
     private string $accessToken;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="created_at")
      */
     private \DateTime $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="modified_at")
      */
     private \Datetime $modifiedAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="expiration_at")
      */
     private \DateTime $expirationAt;
 
     /**
-     * @ORM\Column(type="string", length=32)
+     * @ORM\Column(type="string", name="type_token", length=32)
      */
     private string $typeToken;
 
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\OneToOne(targetEntity="App\Entity\OAuth2RefreshToken", inversedBy="id")
+     * @ORM\OneToOne(targetEntity=OAuth2RefreshToken::class)
+     * @ORM\JoinColumn(name="refresh_token_id")
      */
     private OAuth2RefreshToken $refreshToken;
 

@@ -26,21 +26,16 @@ class AccountController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             
             $account = $this->getObjectPerRequest($request, Account::class);
-
             if(!$account instanceof Account){
                 throw new Exception("Error Processing Request", 500);
             }
             
             if (!$this->checkIsEmail($account->getEmail())) {
-                $datetime = new \DateTime('now', new DateTimeZone('America/Sao_Paulo'));
-                $account->setCreatedAt($datetime);
-                $account->setModifiedAt($datetime);
                 $em->persist($account);
                 $em->flush();
             } else {
                 throw new Exception("Email already exists", Response::HTTP_CONFLICT);
             }
-
 
             return new JsonResponse([
                 'message' => 'Conta criada com sucesso',

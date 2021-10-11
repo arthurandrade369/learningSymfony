@@ -101,7 +101,6 @@ class AccountUserProvider implements UserProviderInterface
     public function createAccessToken(Request $request, OAuth2RefreshToken $refreshToken)
     {
         $token = new OAuth2AccessToken();
-
         $token->setAccessToken($this->generateToken());
         $token->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
         $token->setTypeToken('Bearer');
@@ -115,7 +114,7 @@ class AccountUserProvider implements UserProviderInterface
 
     public function createRefreshToken(Account $account)
     {
-        $refreshToken = new OAuth2RefreshToken;
+        $refreshToken = new OAuth2RefreshToken();
         $refreshToken->setRefreshToken($this->generateToken());
         $refreshToken->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
         $refreshToken->setAccount($account);
@@ -135,7 +134,7 @@ class AccountUserProvider implements UserProviderInterface
         if ($account instanceof Account) {
             return $account;
         }
-        if (!in_array($address, ['This is a test'])) {
+        if (!in_array($address, TokenAuthenticatorSecurity::getAuthorizedIp())) {
             return null;
         }
 

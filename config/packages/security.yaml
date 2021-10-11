@@ -14,7 +14,7 @@ security:
             anonymous: ~
             provider: app_account_provider
             pattern: '^/service/v1/'
-            security: true
+            security: false
             stateless: true
             guard:
                 authenticators:
@@ -25,3 +25,4 @@ security:
         - { path: ^/service/v1/book, methods: [POST, PUT, DELETE], roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/service/v1/publisher, methods: [POST, PUT, DELETE], roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/service/v1/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/v1/, roles: IS_AUTHENTICATED_FULLY }

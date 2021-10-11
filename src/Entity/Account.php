@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -15,9 +14,8 @@ class Account implements UserInterface
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="App\Entity\OAuth2RefreshToken", mappedBy="account")
      */
     private int $id;
     
@@ -37,7 +35,6 @@ class Account implements UserInterface
     private string $scope;
 
     /**
-     * @var string The hashed password
      * @ORM\Column(type="string", length=64)
      */
     private string $password;
@@ -50,12 +47,17 @@ class Account implements UserInterface
     private string $type;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="boolean")
+     */
+    private string $enabled;
+
+    /**
+     * @ORM\Column(type="datetime", name="created_at")
      */
     private \Datetime $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="modified_at")
      */
     private \Datetime $modifiedAt;
 

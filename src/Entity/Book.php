@@ -14,7 +14,7 @@ class Book
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
      */
     private int $id;
@@ -30,18 +30,18 @@ class Book
     private string $author;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="quantity_pages")
      */
     private int $quantityPages;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="release_date")
      */
     private int $releaseDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Publisher")
-     * @ORM\Column(type="integer", name="publisher_id")
+     * @ORM\ManyToOne(targetEntity=Publisher::class)
+     * @ORM\JoinColumn(name="publisher_id")
      */
     private Publisher $publisher;
 

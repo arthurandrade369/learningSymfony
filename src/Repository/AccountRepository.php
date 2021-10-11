@@ -66,26 +66,25 @@ class AccountRepository extends ServiceEntityRepository
     public function getUserByAccessToken($token, $tokenId)
     {
         try {
+            $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+            $rsm->addRootEntityFromClassMetadata(Account::class, 'a');
             $sql = '
                 SELECT
                     a.*
                 FROM
                     accounts AS a
-                    INNER JOIN oauth2_refresh_token AS rt ON a.id = rt.account
-                    INNER JOIN oauth2_access_token AS at ON at.refresh_token = rt.id
+                    INNER JOIN oauth2_refresh_token AS ort ON a.id = ort.account_id
+                    INNER JOIN oauth2_access_token AS oat ON oat.refresh_token_id = rt.id AND oat.id = :id
                 WHERE
-                    at.id = :id AND at.access_token = :token AND at.expiration_at > NOW() 
+                    oat.access_token = :token AND a.enabled = :enabled AND oat.expiration_at > NOW() 
                 LIMIT 1';
 
-            $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-            $rsm->addRootEntityFromClassMetadata(Account::class, 'a');
+            $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+            $query->setParameter('id', $tokenId);
+            $query->setParameter('token', $token);
+            $query->setParameter('enabled', true);
 
-            $account = $this->getEntityManager()->createNativeQuery($sql, $rsm)
-            ->setParameter('id', $tokenId)
-            ->setParameter('token', $tokenId . '_' . $token)
-            ->getResult();
-            
-            return $account; 
+            return $query->getResult();
         } catch (Exception $exception) {
             error_log($exception->getMessage());
             return null;

@@ -49,7 +49,7 @@ class DoctrineEventListener implements EventSubscriberInterface
         $entity = $args->getObject();
 
         if ($action === 'persist') {
-            if (property_exists($entity, 'createAt') && property_exists($entity, 'modifiedAt')) {
+            if (property_exists($entity, 'createdAt') && property_exists($entity, 'modifiedAt')) {
                 $entity->setCreatedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
                 $entity->setModifiedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
             }

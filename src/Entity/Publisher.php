@@ -14,9 +14,8 @@ class Publisher
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
-     * @ORM\OneToMany(targetEntity="Book", mappedBy="publisher")
      */
     private int $id;
 
