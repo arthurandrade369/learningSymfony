@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseControll
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use JMS\Serializer\SerializerInterface;
-use PhpParser\Node\Stmt\Return_;
 
 class AbstractController extends BaseController
 {
@@ -33,7 +32,6 @@ class AbstractController extends BaseController
     }
 
     /**
-     * Get the value of AccountUserProvider
      * @return AccountUserProvider
      */
     public function getAccountUserProvider(): AccountUserProvider
@@ -137,9 +135,9 @@ class AbstractController extends BaseController
 
     public function abstractResponse(Request $request, $data, $contextGroup = null)
     {
-        $reponse = new Response($this->serializer($data, $contextGroup));
+        $reponse = new Response();
         $reponse->headers->set('Content-Type', 'application/json');
-        return new Response($this->serializer($data, $contextGroup));
+        return $reponse->create($this->serializer($data, $contextGroup));
     }
 
     public function serializer($data, $contextGroup = null)
@@ -182,5 +180,34 @@ class AbstractController extends BaseController
         if(!$varToken[0] && $varToken[1]) return null;
 
         return $varToken;
+    }
+
+    /**
+     * @param $entity
+     * @throws Exception
+     */
+    public static function errorNotFoundResponse($entity)
+    {
+        $message = substr($entity, 11) . ' Not Found';
+        throw new Exception($message, Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * @param string $message
+     * @throws Exception
+     */
+    public static function errorUnProcessableEntityResponse(string $message)
+    {
+        throw new Exception($message, Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    /**
+     * @param $entity
+     * @throws Exception
+     */
+    public static function errorInternalServerResponse($entity)
+    {
+        $message = 'Expected a instance of ' . substr($entity, 11) . ' class';
+        throw new Exception($message, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

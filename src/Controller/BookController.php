@@ -7,131 +7,86 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Book;
-use App\Repository\BookRepository;
-use DateTime;
+use App\Entity\Publisher;
 use Exception;
+use App\Controller\AbstractCrudController;
 
 /**
  * @Route("/service/v1/book", name="book_")
  */
-class BookController extends AbstractController
+class BookController extends AbstractCrudController
 {
 
     /**
      * @Route("", name="list", methods={"GET"})
      */
-    public function listBooks(Request $request): Response
+    public function listAction(Request $request)
     {
-        try {
-            $em = $this->getDoctrine()->getManager();
-
-            $repo = $em->getRepository(Book::class);
-            if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
-
-            $book = $repo->findEverything();
-
-            return new Response($this->serializer($book));
-        } catch (Exception $exception) {
-            return $this->exceptionResponse($request, $exception);
-        }
+        $this->list(Book::class, $request);
     }
 
     /**
-     * @Route("/{bookId}", name="show", methods={"GET"})
+     * @Route("/{id}", name="show", methods={"GET"})
      */
-    public function showBook($bookId, Request $request): Response
+    public function showAction($id, Request $request)
     {
-        try {
-            $em = $this->getDoctrine()->getManager();
-
-            $repo = $em->getRepository(Book::class);
-            if (!$repo instanceof BookRepository) throw new Exception("Error Processing Entity", 500);
-
-            $book = $repo->findOnlyOne($bookId);
-
-            return new Response($this->serializer($book, 'json', ['Show']));
-        } catch (Exception $exception) {
-            return $this->exceptionResponse($request, $exception);
-        }
+        $this->show($id, Book::class, $request);
     }
 
     /**
      * @Route("/", name="create", methods={"POST"})
      */
-    public function createBook(Request $request)
+    public function createAction(Request $request)
     {
         try {
-
             $em = $this->getDoctrine()->getManager();
 
-            $data = $request->request->all();
+            $book = $this->getObjectPerRequest($request, Book::class);
+            if (!$book instanceof Book) AbstractController::errorInternalServerResponse(Publisher::class);
+            if (!$book->getPublisher()) AbstractController::errorUnProcessableEntityResponse('publisher is required');
 
-            $book = new Book();
-            $book->setTitle($data['title']);
-            $book->setAuthor($data['author']);
-            $book->setQuantityPages($data['quantity_pages']);
-            $book->setReleaseDate(($data['release_date']));
-            $book->setPublisher($data['publishing_company']);
+            $publisher = $this->getDoctrine()->getRepository(Publisher::class)->find($book->getPublisher()->getId());
+            if (!$publisher) AbstractController::errorNotFoundResponse(Publisher::class);
+            if (!$publisher instanceof Publisher) AbstractController::errorInternalServerResponse(Publisher::class);
 
+            $book->setPublisher($publisher);
             $em->persist($book);
             $em->flush();
 
-            return $this->json($book);
+            return $this->abstractResponse($request, $book);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
     }
 
     /**
-     * @Route("/{bookId}", name="update", methods={"PUT"})
+     * @Route("/{id}", name="update", methods={"PUT"})
      */
-    public function updateBook($bookId, Request $request)
+    public function updateAction($id, Request $request)
     {
         try {
-            $data = $request->request->all();
-
             $doctrine = $this->getDoctrine();
 
-            $book = $doctrine->getRepository(Book::class)->find($bookId);
+            $data = $this->getObjectPerRequest($request, Book::class);
+            $book = $this->getDoctrine()->getRepository(Book::class)->find($id);
+            if (!$book) AbstractController::errorNotFoundResponse(Book::class);
+            if (!$book instanceof Book) AbstractController::errorInternalServerResponse(Book::class);
 
-            // if ($request->request->has('title'))
-            //     $book->setBookTitle($data['title']);
-            // if ($request->request->has('author'))
-            //     $book->setBookAuthor($data['author']);
-            // if ($request->request->has('quantity_pages'))
-            //     $book->setQuantityPages($data['quantity_pages']);
-            // if ($request->request->has('release_date'))
-            //     $book->setReleaseDate(new DateTime($data['release_date']));
-            // if ($request->request->has('publishing_company'))
-            //     $book->setPublisherId($data['publishing_company']);
             $book->setObject($data);
-
             $em = $doctrine->getManager();
             $em->flush();
 
-            return new Response("Livro atualizado com sucesso");
+            return $this->abstractResponse($request, $book);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
     }
 
     /**
-     * @Route("/{bookId}", name="delete", methods={"DELETE"})
+     * @Route("/{id}", name="delete", methods={"DELETE"})
      */
-    public function deleteBook($bookId, Request $request)
+    public function deleteAction($id, Request $request)
     {
-        try {
-            $doctrine = $this->getDoctrine();
-
-            $book = $doctrine->getRepository(Book::class)->find($bookId);
-
-            $em = $doctrine->getManager();
-            $em->remove($book);
-            $em->flush();
-
-            return new Response("Livro apagado com sucesso");
-        } catch (Exception $exception) {
-            return $this->exceptionResponse($request, $exception);
-        }
+        $this->delete($id, Book::class, $request);
     }
 }

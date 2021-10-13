@@ -78,8 +78,7 @@ class AccountUserProvider implements UserProviderInterface
         $repoUser = $this->entityManager->getRepository(Account::class);
 
         if (empty($OAuth2Request->getUsername()) || empty($OAuth2Request->getPassword())) {
-            //     AbstractController::errorUnProcessableEntityResponse("username and password is required");
-            throw new Exception("Username and Password is required", Response::HTTP_BAD_REQUEST);
+            AbstractController::errorUnProcessableEntityResponse("Username and password is required");
         }
 
         // checks if the user exists
@@ -87,8 +86,7 @@ class AccountUserProvider implements UserProviderInterface
             'email' => $OAuth2Request->getUsername(),
             'password' => md5($OAuth2Request->getPassword())
         ]);
-        if (!$account) throw new Exception('Username or password are invalid', Response::HTTP_UNAUTHORIZED);
-        // if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
+        if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
 
         $refreshToken = $this->createRefreshToken($account);
         if (!$refreshToken instanceof OAuth2RefreshToken) {

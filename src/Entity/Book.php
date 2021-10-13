@@ -8,7 +8,7 @@ use App\Entity\Publisher;
 
 /**
  * @ORM\Entity(repositoryClass=BookRepository::class)
- * @ORM\Table(name="book")
+ * @ORM\Table(name="books")
  */
 class Book
 {

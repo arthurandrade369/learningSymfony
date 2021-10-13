@@ -8,7 +8,7 @@ use App\Entity\Book;
 
 /**
  * @ORM\Entity(repositoryClass=PublisherRepository::class)
- * @ORM\Table(name="publisher")
+ * @ORM\Table(name="publishers")
  */
 class Publisher
 {
@@ -39,5 +39,10 @@ class Publisher
         $this->name = $name;
 
         return $this;
+    }
+
+    public function setObject($object)
+    {
+        $this->setName($object->getName);
     }
 }

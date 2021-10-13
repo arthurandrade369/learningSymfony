@@ -21,7 +21,7 @@ App\Entity\Book:
       expose: true
       type: integer
       group: ["Show", "List", "Create"]
-    App\Entity\Publisher:
+    publisher:
       expose: true
       type: App\Entity\Publisher
-      group: ["Show", "List"]
+      group: ["Show", "List", "Create"]

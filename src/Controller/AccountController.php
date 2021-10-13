@@ -37,10 +37,11 @@ class AccountController extends AbstractController
                 throw new Exception("Email already exists", Response::HTTP_CONFLICT);
             }
 
-            return new JsonResponse([
+            $mData = [
                 'message' => 'Conta criada com sucesso',
                 'data' => $this->serializer($account, 'json')
-            ]);
+            ];
+            return $this->abstractResponse($request, $mData);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
@@ -56,7 +57,7 @@ class AccountController extends AbstractController
 
             $account = $em->getRepository(Account::class)->findAll();
 
-            return new Response($this->dataTableResponse($request, $account));
+            return $this->abstractResponse($request, $account);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
@@ -81,11 +82,6 @@ class AccountController extends AbstractController
      */
     public function deleteAccount($id, Request $request)
     {
-    }
-
-    public function encodePassword($password)
-    {
-        return $password;
     }
 
     public function checkIsEmail(string $email): bool

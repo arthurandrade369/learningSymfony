@@ -23,18 +23,6 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    public function findEverything()
-    {
-        try {
-            return $this->createQueryBuilder('b')
-            ->select('b.id, b.title, b.author, b.quantityPages, b.releaseDate, b.publisher')
-                ->getQuery()->getResult();
-        } catch (Exception $exception) {
-            error_log($exception->getMessage());
-            return null;
-        }
-    }
-
     /**
      * @return Book[] Returns an array of Book object
      */
