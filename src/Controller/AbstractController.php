@@ -107,7 +107,7 @@ class AbstractController extends BaseController
     public function showResponse(Request $request, $data, $contextGroup = null)
     {
         if (!is_object($data)) {
-            throw new Exception("An array is required", Response::HTTP_NOT_ACCEPTABLE);
+            throw new Exception("An object is required", Response::HTTP_NOT_ACCEPTABLE);
         }
 
         return $this->getSerializer()->serialize($data, 'json');
@@ -122,7 +122,7 @@ class AbstractController extends BaseController
     public function dataTableResponse(Request $request, $data, $contextGroup = null): string
     {
         if (!is_array($data)) {
-            throw new Exception("An object is required", Response::HTTP_NOT_ACCEPTABLE);
+            throw new Exception("An array is required", Response::HTTP_NOT_ACCEPTABLE);
         }
 
         $body = array(
@@ -135,9 +135,10 @@ class AbstractController extends BaseController
 
     public function abstractResponse(Request $request, $data, $contextGroup = null)
     {
-        $reponse = new Response();
-        $reponse->headers->set('Content-Type', 'application/json');
-        return $reponse->create($this->serializer($data, $contextGroup));
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+        $response->create($this->serializer($data, $contextGroup));
+        return $response;
     }
 
     public function serializer($data, $contextGroup = null)
@@ -175,9 +176,9 @@ class AbstractController extends BaseController
 
     public static function separateToken($token)
     {
-        $varToken = explode('_', $token); 
-        
-        if(!$varToken[0] && $varToken[1]) return null;
+        $varToken = explode('_', $token);
+
+        if (!$varToken[0] && $varToken[1]) return null;
 
         return $varToken;
     }
