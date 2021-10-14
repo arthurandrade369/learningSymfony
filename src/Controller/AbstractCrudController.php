@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Exception;
 use App\Controller\AbstractController;
+use phpDocumentor\Reflection\Types\AbstractList;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,8 +15,9 @@ class AbstractCrudController extends AbstractController
     {
         try {
             $data = $this->getDoctrine()->getRepository($entity)->findAll();
-  
-            return $this->abstractResponse($request, $data);
+            if (!$data) AbstractController::errorNotFoundResponse($entity);
+
+            return $this->dataTableResponse($request,$data);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
@@ -28,7 +30,7 @@ class AbstractCrudController extends AbstractController
             if (!$data) AbstractController::errorNotFoundResponse($entity);
             if (!$data instanceof $entity) AbstractController::errorInternalServerResponse($entity);
 
-            return $this->abstractResponse($request, $data);
+            return $this->showResponse($request,$data);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
@@ -44,7 +46,7 @@ class AbstractCrudController extends AbstractController
             $em->persist($data);
             $em->flush();
 
-            return $this->abstractResponse($request, $data);
+            return new Response(null, Response::HTTP_CREATED);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
@@ -65,7 +67,7 @@ class AbstractCrudController extends AbstractController
             $em = $doctrine->getManager();
             $em->flush();
 
-            return $this->abstractResponse($request, $object);
+            return new Response(null, Response::HTTP_ACCEPTED);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

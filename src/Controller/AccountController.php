@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Controller\AbstractController;
+use App\Controller\AbstractCrudController;
 use App\Entity\Account;
 use App\Repository\AccountRepository;
 use DateTimeZone;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/service/v1/account", name="account_")
  */
-class AccountController extends AbstractController
+class AccountController extends AbstractCrudController
 {
     /**
      * @Route("", name="register",  methods={"POST"})
@@ -37,11 +37,7 @@ class AccountController extends AbstractController
                 throw new Exception("Email already exists", Response::HTTP_CONFLICT);
             }
 
-            $mData = [
-                'message' => 'Conta criada com sucesso',
-                'data' => $this->serializer($account, 'json')
-            ];
-            return $this->abstractResponse($request, $mData);
+            return new Response(null, Response::HTTP_NO_CONTENT);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

@@ -23,6 +23,10 @@ class OAuth2AccessTokenRepository extends ServiceEntityRepository
         parent::__construct($registry, OAuth2AccessToken::class);
     }
 
+    public function getAccessToken($refreshTokenId, $refreshToken)
+    {
+        
+    }
     // /**
     //  * @return AcessToken[] Returns an array of AcessToken objects
     //  */

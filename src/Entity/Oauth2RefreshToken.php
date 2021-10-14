@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class OAuth2RefreshToken
 {
+    public const TTL = 3600;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -33,11 +35,6 @@ class OAuth2RefreshToken
      * @ORM\Column(type="datetime", name="modified_at")
      */
     private \DateTime $modifiedAt;
-
-    /**
-     * @ORM\Column(type="datetime", name="expiration_at")
-     */
-    private \DateTime $expirationAt;
 
     /**
      * @ORM\OneToOne(targetEntity=Account::class)

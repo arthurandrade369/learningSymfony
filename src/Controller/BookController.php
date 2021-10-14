@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +21,7 @@ class BookController extends AbstractCrudController
      */
     public function listAction(Request $request)
     {
-        $this->list(Book::class, $request);
+        return $this->list(Book::class, $request);
     }
 
     /**
@@ -30,7 +29,7 @@ class BookController extends AbstractCrudController
      */
     public function showAction($id, Request $request)
     {
-        $this->show($id, Book::class, $request);
+        return $this->show($id, Book::class, $request);
     }
 
     /**
@@ -53,7 +52,7 @@ class BookController extends AbstractCrudController
             $em->persist($book);
             $em->flush();
 
-            return $this->abstractResponse($request, $book);
+            return new Response(null, Response::HTTP_CREATED);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
@@ -87,6 +86,6 @@ class BookController extends AbstractCrudController
      */
     public function deleteAction($id, Request $request)
     {
-        $this->delete($id, Book::class, $request);
+        return $this->delete($id, Book::class, $request);
     }
 }

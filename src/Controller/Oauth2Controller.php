@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Controller\AbstractController;
+use App\Controller\AbstractCrudController;
 use App\Entity\Account;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,7 @@ use Exception;
 /**
  * @Route("/service/v1/oauth2", name="oauth2_")
  */
-class OAuth2Controller extends AbstractController
+class OAuth2Controller extends AbstractCrudController
 {
     /**
      * @Route("", name="login")

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Account;
+use App\Model\View;
 use App\Provider\AccountUserProvider;
 use Exception;
 use JMS\Serializer\DeserializationContext;
@@ -37,6 +38,23 @@ class AbstractController extends BaseController
     public function getAccountUserProvider(): AccountUserProvider
     {
         return $this->accountUserProvider;
+    }
+
+    public function View($body = null, $statusCode = null, $header = [])
+    {
+        $view = new View($body, $statusCode, $header);
+        $view->setGroups(['Default']);
+        return $view;
+    }
+
+    public function handleView(View $view)
+    {
+        $context = SerializationContext::create();
+        $context->setGroups($view->getGroups());
+        
+        $data = $this->serializer($view->getBody(),$context);
+
+        return $data;
     }
 
     /**
@@ -110,7 +128,11 @@ class AbstractController extends BaseController
             throw new Exception("An object is required", Response::HTTP_NOT_ACCEPTABLE);
         }
 
-        return $this->getSerializer()->serialize($data, 'json');
+        $view = new View($data);
+        $view->setStatusCode(Response::HTTP_OK);
+        $view->setHeader(['Content-Type' => $view->getContentType()]);
+
+        return new Response($this->serializer($view, $contextGroup), $view->getStatusCode(), $view->getHeader());
     }
 
     /**
@@ -119,7 +141,7 @@ class AbstractController extends BaseController
      * @param [type] $contextGroup
      * @return string
      */
-    public function dataTableResponse(Request $request, $data, $contextGroup = null): string
+    public function dataTableResponse(Request $request, $data, $contextGroup = null): Response
     {
         if (!is_array($data)) {
             throw new Exception("An array is required", Response::HTTP_NOT_ACCEPTABLE);
@@ -130,15 +152,11 @@ class AbstractController extends BaseController
             "aaData" => $data
         );
 
-        return $this->getSerializer()->serialize($body, 'json');
-    }
+        $view = new View($body);
+        $view->setStatusCode(Response::HTTP_OK);
+        $view->setHeader(['Content-Type' => $view->getContentType()]);
 
-    public function abstractResponse(Request $request, $data, $contextGroup = null)
-    {
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/json');
-        $response->create($this->serializer($data, $contextGroup));
-        return $response;
+        return new Response($this->serializer($view, $contextGroup), $view->getStatusCode(), $view->getHeader());
     }
 
     public function serializer($data, $contextGroup = null)

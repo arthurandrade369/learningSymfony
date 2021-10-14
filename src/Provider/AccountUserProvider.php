@@ -15,8 +15,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Model\OAuth2Request;
+use App\Model\OAuth2Response;
 use App\Repository\AccountRepository;
 use App\Repository\OAuth2AccessTokenRepository;
+use App\Repository\OAuth2RefreshTokenRepository;
 use App\Security\TokenAuthenticatorSecurity;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
@@ -96,31 +98,47 @@ class AccountUserProvider implements UserProviderInterface
         return $this->createAccessToken($request, $refreshToken);
     }
 
-    public function createAccessToken(Request $request, OAuth2RefreshToken $refreshToken)
+    /**
+     * @param Account $account
+     * @return OAuth2RefreshToken
+     */
+    public function createRefreshToken(Account $account): OAuth2RefreshToken
     {
-        $token = new OAuth2AccessToken();
-        $token->setAccessToken($this->generateToken());
-        $token->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
-        $token->setTypeToken('Bearer');
-        $token->setRefreshToken($refreshToken);
+        $em = $this->getEntityManager();
 
-        $this->entityManager->persist($token);
-        $this->entityManager->flush();
+        $repoRefreshToken = $em->getRepository(OAuth2RefreshToken::class);
+        if(!$repoRefreshToken instanceof OAuth2RefreshTokenRepository) throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
+        $refreshToken = $repoRefreshToken->getRefreshTokenByAccount($account->getId());
+        if($refreshToken) return $this->updateRefreshToken($refreshToken,$account);
 
-        return $token;
-    }
-
-    public function createRefreshToken(Account $account)
-    {
         $refreshToken = new OAuth2RefreshToken();
         $refreshToken->setRefreshToken($this->generateToken());
-        $refreshToken->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
         $refreshToken->setAccount($account);
-
-        $this->entityManager->persist($refreshToken);
-        $this->entityManager->flush();
+        $em->persist($refreshToken);
+        $em->flush();
 
         return $refreshToken;
+    }
+    
+    public function createAccessToken(Request $request, OAuth2RefreshToken $refreshToken): OAuth2Response
+    {
+        $em = $this->getEntityManager();
+        
+        $repoAccessToken = $em->getRepository(OAuth2AccessToken::class);
+        if(!$repoAccessToken instanceof OAuth2AccessTokenRepository) throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
+        $accessToken = $repoAccessToken->getAccessToken($refreshToken->getId(),$refreshToken->getRefreshToken());
+
+
+        $acessToken = new OAuth2AccessToken();
+        $acessToken->setAccessToken($this->generateToken());
+        $acessToken->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
+        $acessToken->setTypeToken('Bearer');
+        $acessToken->setRefreshToken($refreshToken);
+
+        $this->entityManager->persist($acessToken);
+        $this->entityManager->flush();
+
+        return $acessToken;
     }
 
     public function getByAccessToken($token, $tokenId, $address)

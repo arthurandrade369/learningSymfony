@@ -2,12 +2,9 @@
 
 namespace App\Controller;
 
-use App\Controller\AbstractController;
+use App\Controller\AbstractCrudController;
 use App\Entity\Publisher;
-use App\Repository\PublisherRepository;
-use Exception;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -20,7 +17,7 @@ class PublisherController extends AbstractCrudController
      */
     public function listPublishers(Request $request)
     {
-        $this->list(Publisher::class, $request);
+        return $this->list(Publisher::class, $request);
     }
 
     /**
@@ -28,7 +25,7 @@ class PublisherController extends AbstractCrudController
      */
     public function showPublisher($id, Request $request)
     {
-        $this->show($id, Publisher::class,$request);
+        return $this->show($id, Publisher::class,$request);
     }
 
     /**
@@ -36,7 +33,7 @@ class PublisherController extends AbstractCrudController
      */
     public function createPublisher(Request $request)
     {
-        $this->create(Publisher::class, $request);
+        return $this->create(Publisher::class, $request);
     }
 
     /**
@@ -44,7 +41,7 @@ class PublisherController extends AbstractCrudController
      */
     public function updateCompany($id, Request $request)
     {
-        $this->update($id, Publisher::class, $request);
+        return $this->update($id, Publisher::class, $request);
     }
 
     /**
@@ -52,6 +49,6 @@ class PublisherController extends AbstractCrudController
      */
     public function deleteCompany($id, Request $request)
     {
-        $this->delete($id, Publisher::class, $request);
+        return $this->delete($id, Publisher::class, $request);
     }
 }
