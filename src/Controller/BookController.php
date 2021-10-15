@@ -9,6 +9,7 @@ use App\Entity\Book;
 use App\Entity\Publisher;
 use Exception;
 use App\Controller\AbstractCrudController;
+use App\Entity\OAuth2RefreshToken;
 
 /**
  * @Route("/service/v1/book", name="book_")
@@ -75,7 +76,7 @@ class BookController extends AbstractCrudController
             $em = $doctrine->getManager();
             $em->flush();
 
-            return $this->abstractResponse($request, $book);
+            return new Response(null, Response::HTTP_ACCEPTED);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

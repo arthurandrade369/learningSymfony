@@ -19,7 +19,7 @@ App\Entity\Book:
       group: ["Show", "List", "Create"]
     releaseDate:
       expose: true
-      type: integer
+      type: string
       group: ["Show", "List", "Create"]
     publisher:
       expose: true

@@ -14,7 +14,7 @@ security:
             anonymous: ~
             provider: app_account_provider
             pattern: '^/service/v1/'
-            security: false
+            security: true
             stateless: true
             guard:
                 authenticators:

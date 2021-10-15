@@ -40,7 +40,7 @@ class OAuth2Controller extends AbstractCrudController
                     break;
             }
 
-            return $this->abstractResponse($request, $oauth2Response);
+            return $this->showResponse($request, $oauth2Response);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

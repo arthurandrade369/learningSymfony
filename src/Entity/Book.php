@@ -35,7 +35,7 @@ class Book
     private int $quantityPages;
 
     /**
-     * @ORM\Column(type="integer", name="release_date")
+     * @ORM\Column(type="string", name="release_date", length=4)
      */
     private int $releaseDate;
 

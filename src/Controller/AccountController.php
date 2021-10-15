@@ -48,12 +48,14 @@ class AccountController extends AbstractCrudController
      */
     public function listAccounts(Request $request): Response
     {
+        // $this->isGranted('ROLE_ADMIN');
+
         try {
             $em = $this->getDoctrine()->getManager();
 
             $account = $em->getRepository(Account::class)->findAll();
 
-            return $this->abstractResponse($request, $account);
+            return $this->dataTableResponse($request, $account, 'List');
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

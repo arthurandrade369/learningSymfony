@@ -20,6 +20,8 @@ use App\Repository\AccountRepository;
 use App\Repository\OAuth2AccessTokenRepository;
 use App\Repository\OAuth2RefreshTokenRepository;
 use App\Security\TokenAuthenticatorSecurity;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class AccountUserProvider implements UserProviderInterface
@@ -33,6 +35,16 @@ class AccountUserProvider implements UserProviderInterface
         $this->tokenGenerator = $tokenGenerator;
     }
 
+    /**
+     * @return EntityManagerInterface
+     */
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
+    }
+    /**
+     * @return string
+     */
     public function generateToken(): string
     {
         return $this->tokenGenerator->generateToken();
@@ -60,6 +72,10 @@ class AccountUserProvider implements UserProviderInterface
         throw new Exception('TODO: fill in refreshUser() inside ' . __FILE__);
     }
 
+    /**
+     * @param [type] $class
+     * @return void
+     */
     public function supportsClass($class)
     {
         return Account::class === $class || is_subclass_of($class, Account::class);
@@ -95,7 +111,12 @@ class AccountUserProvider implements UserProviderInterface
             throw new Exception("Refresh token error", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $this->createAccessToken($request, $refreshToken);
+        return $this->createAccessToken($request, $refreshToken, $account);
+    }
+
+    public function createAccessTokenByRefreshToken(Request $request, OAuth2Request $oauth2Request)
+    {
+
     }
 
     /**
@@ -105,11 +126,10 @@ class AccountUserProvider implements UserProviderInterface
     public function createRefreshToken(Account $account): OAuth2RefreshToken
     {
         $em = $this->getEntityManager();
-
         $repoRefreshToken = $em->getRepository(OAuth2RefreshToken::class);
-        if(!$repoRefreshToken instanceof OAuth2RefreshTokenRepository) throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
+        if (!$repoRefreshToken instanceof OAuth2RefreshTokenRepository) throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
         $refreshToken = $repoRefreshToken->getRefreshTokenByAccount($account->getId());
-        if($refreshToken) return $this->updateRefreshToken($refreshToken,$account);
+        if ($refreshToken) return $this->updateRefreshToken($refreshToken, $account);
 
         $refreshToken = new OAuth2RefreshToken();
         $refreshToken->setRefreshToken($this->generateToken());
@@ -119,31 +139,43 @@ class AccountUserProvider implements UserProviderInterface
 
         return $refreshToken;
     }
-    
-    public function createAccessToken(Request $request, OAuth2RefreshToken $refreshToken): OAuth2Response
+
+    /**
+     * @param Request $request
+     * @param OAuth2RefreshToken $refreshToken
+     * @return void
+     */
+    public function createAccessToken(Request $request, OAuth2RefreshToken $refreshToken, Account $account)
     {
         $em = $this->getEntityManager();
-        
         $repoAccessToken = $em->getRepository(OAuth2AccessToken::class);
-        if(!$repoAccessToken instanceof OAuth2AccessTokenRepository) throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
-        $accessToken = $repoAccessToken->getAccessToken($refreshToken->getId(),$refreshToken->getRefreshToken());
+        if (!$repoAccessToken instanceof OAuth2AccessTokenRepository) throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
+        $accessToken = $repoAccessToken->getAccessToken($refreshToken->getId(), $refreshToken->getRefreshToken());
 
 
-        $acessToken = new OAuth2AccessToken();
-        $acessToken->setAccessToken($this->generateToken());
-        $acessToken->setExpirationAt(new \DateTime('+1 hour', new \DateTimeZone('America/Sao_Paulo')));
-        $acessToken->setTypeToken('Bearer');
-        $acessToken->setRefreshToken($refreshToken);
+        $accessToken = new OAuth2AccessToken();
+        $accessToken->setAccessToken($this->generateToken());
+        $accessToken->setExpirationAt(new \DateTime('+' . OAuth2RefreshToken::TTL . 'seconds', new \DateTimeZone('America/Sao_Paulo')));
+        $accessToken->setTypeToken('Bearer');
+        $accessToken->setRefreshToken($refreshToken);
 
-        $this->entityManager->persist($acessToken);
-        $this->entityManager->flush();
+        $em->persist($accessToken);
+        $em->flush();
 
-        return $acessToken;
+        return $this->generateResponseOauth2($accessToken, $account);
     }
 
+    /**
+     * @param string $token
+     * @param string $tokenId
+     * @param string $address
+     * @return object|null
+     */
     public function getByAccessToken($token, $tokenId, $address)
     {
-        $repoAccessToken = $this->entityManager->getRepository(Account::class);
+        $em = $this->getEntityManager();
+
+        $repoAccessToken = $em->getRepository(Account::class);
         if (!$repoAccessToken instanceof AccountRepository) return null;
 
         $account = $repoAccessToken->getUserByAccessToken($token, $tokenId);
@@ -154,6 +186,23 @@ class AccountUserProvider implements UserProviderInterface
             return null;
         }
 
-        return $this->entityManager->getRepository(Account::class)->find(1);
+        return $em->getRepository(Account::class)->find(1);
+    }
+
+    public function updateRefreshToken(OAuth2RefreshToken $refreshToken, Account $account)
+    {
+    }
+
+    public function generateResponseOauth2(OAuth2AccessToken $accessToken, Account $account): OAuth2Response
+    {
+        $oauth2Response = new OAuth2Response();
+        $oauth2Response->setRefreshToken($accessToken->getRefreshToken()->getId() . '_' . $accessToken->getRefreshToken()->getRefreshToken());
+        $oauth2Response->setAccessToken($accessToken->getId() . '_' . $accessToken->getAccessToken());
+        $oauth2Response->setAddress($accessToken->getAddress());
+        $oauth2Response->setTokenType($accessToken->getTypeToken());
+        $oauth2Response->setExpiresIn(OAuth2RefreshToken::TTL);
+        $oauth2Response->setScope($account->getScope());
+
+        return $oauth2Response;
     }
 }

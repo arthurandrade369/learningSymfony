@@ -46,6 +46,11 @@ class OAuth2AccessToken
     private string $typeToken;
 
     /**
+     * @ORM\Column(type="string", length=12)
+     */
+    private string $address;
+
+    /**
      * @ORM\OneToOne(targetEntity=OAuth2RefreshToken::class)
      * @ORM\JoinColumn(name="refresh_token_id")
      */
@@ -112,6 +117,18 @@ class OAuth2AccessToken
     public function setTypeToken(string $typeToken): self
     {
         $this->typeToken = $typeToken;
+
+        return $this;
+    }
+    
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    public function setAddress($address)
+    {
+        $this->address = $address;
 
         return $this;
     }

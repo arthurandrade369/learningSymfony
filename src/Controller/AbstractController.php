@@ -40,29 +40,46 @@ class AbstractController extends BaseController
         return $this->accountUserProvider;
     }
 
-    public function View($body = null, $statusCode = null, $header = [])
+    /**
+     * @param mixed $body
+     * @param int|null $statusCode
+     * @param array $header
+     * @return View
+     */
+    public function view($body = null, $statusCode = null, $header = []): View
     {
         $view = new View($body, $statusCode, $header);
-        $view->setGroups(['Default']);
+        // $view->setGroups(['Default']);
         return $view;
     }
 
-    public function handleView(View $view)
+    /**
+     * @param View $view
+     * @return string
+     */
+    public function handleView(View $view): Response
     {
-        $context = SerializationContext::create();
-        $context->setGroups($view->getGroups());
-        
-        $data = $this->serializer($view->getBody(),$context);
+        $context = null;
+        if ($view->getGroups()) {
+            $context = SerializationContext::create();
+            $context->setGroups($view->getGroups());
+        }
 
-        return $data;
+        $view->setHeader(['Content-Type' => $view->getContentType()]);
+        $data = $this->serializer($view->getBody(), $context);
+
+        $response = new Response();
+        $response->setStatusCode($view->getStatusCode());
+        $response->headers->add($view->getHeader());
+        $response->setContent($data);
+
+        return $response;
     }
 
     /**
-     * Undocumented function
-     *
      * @param Request $request
      * @param string $entity
-     * @param ?string $contextGroup
+     * @param string|null $contextGroup
      * @return mixed
      */
     public function getObjectPerRequest(Request $request, string $entity, ?string $contextGroup = null)
@@ -108,40 +125,39 @@ class AbstractController extends BaseController
             'address' => $request->getClientIp()
         ));
 
-        $response = new Response();
-        $response->setContent($responseBody);
-        $response->setStatusCode($exceptionCode);
-        $response->headers->set('Content-Type', 'application/json');
+        $view = new View($responseBody, $exceptionCode);
+        // $response = new Response();
+        // $response->setContent($responseBody);
+        // $response->setStatusCode($exceptionCode);
+        // $response->headers->set('Content-Type', 'application/json');
 
-        return $response;
+        return $this->handleView($view);
     }
 
     /**
      * @param Request $request
-     * @param [type] $data
-     * @param [type] $contextGroup
-     * @return void
+     * @param mixed $data
+     * @param string|null $contextGroup
+     * @return Response
      */
-    public function showResponse(Request $request, $data, $contextGroup = null)
+    public function showResponse(Request $request, $data, $contextGroup = null): Response
     {
         if (!is_object($data)) {
             throw new Exception("An object is required", Response::HTTP_NOT_ACCEPTABLE);
         }
 
-        $view = new View($data);
-        $view->setStatusCode(Response::HTTP_OK);
-        $view->setHeader(['Content-Type' => $view->getContentType()]);
+        $view = $this->view($data, Response::HTTP_OK);
 
-        return new Response($this->serializer($view, $contextGroup), $view->getStatusCode(), $view->getHeader());
+        return $this->handleView($view);
     }
 
     /**
      * @param Request $request
-     * @param [type] $data
-     * @param [type] $contextGroup
+     * @param array $data
+     * @param string|null $contextGroup
      * @return string
      */
-    public function dataTableResponse(Request $request, $data, $contextGroup = null): Response
+    public function dataTableResponse(Request $request, array $data, $contextGroup = null): Response
     {
         if (!is_array($data)) {
             throw new Exception("An array is required", Response::HTTP_NOT_ACCEPTABLE);
@@ -152,14 +168,12 @@ class AbstractController extends BaseController
             "aaData" => $data
         );
 
-        $view = new View($body);
-        $view->setStatusCode(Response::HTTP_OK);
-        $view->setHeader(['Content-Type' => $view->getContentType()]);
+        $view = $this->view($body, Response::HTTP_OK);
 
-        return new Response($this->serializer($view, $contextGroup), $view->getStatusCode(), $view->getHeader());
+        return $this->handleView($view);
     }
 
-    public function serializer($data, $contextGroup = null)
+    public function serializer($data, $contextGroup = null): string
     {
         $format = 'json';
         $context = null;
@@ -185,14 +199,22 @@ class AbstractController extends BaseController
         return $this->getSerializer()->deserialize($data, $entity, $format, $context);
     }
 
-    public static function separateAuthorization($token)
+    /**
+     * @param string $token
+     * @return string
+     */
+    public static function separateAuthorization(string $token): string
     {
         $varToken = explode(' ', $token, 2);
 
         return $varToken[1];
     }
 
-    public static function separateToken($token)
+    /**
+     * @param string $token
+     * @return array|null
+     */
+    public static function separateToken(string $token): ?array
     {
         $varToken = explode('_', $token);
 

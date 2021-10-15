@@ -11,13 +11,13 @@ use Symfony\Component\HttpFoundation\Response;
 class AbstractCrudController extends AbstractController
 {
 
-    public function list($entity, Request $request): Response
+    public function list($entity, Request $request, $contextGroup = null): Response
     {
         try {
             $data = $this->getDoctrine()->getRepository($entity)->findAll();
             if (!$data) AbstractController::errorNotFoundResponse($entity);
 
-            return $this->dataTableResponse($request,$data);
+            return $this->dataTableResponse($request,$data, $contextGroup);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
