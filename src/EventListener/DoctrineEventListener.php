@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Listener;
+namespace App\EventListener;
 
 use App\Entity\Account;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
+date_default_timezone_set('America/Sao_Paulo');
+
 class DoctrineEventListener implements EventSubscriberInterface
 {
-    public const BRT = 'America/Sao_Paulo';
-
     /**
      * This method can only return th event names; you cannot define a
      * custom method name to execute when each event triggers
@@ -50,8 +50,8 @@ class DoctrineEventListener implements EventSubscriberInterface
 
         if ($action === 'persist') {
             if (property_exists($entity, 'createdAt') && property_exists($entity, 'modifiedAt')) {
-                $entity->setCreatedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
-                $entity->setModifiedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
+                $entity->setCreatedAt(new \DateTime('NOW'));
+                $entity->setModifiedAt(new \DateTime('NOW'));
             }
             if ($entity instanceof Account) {
                 if (property_exists($entity, 'plainPassword')) {
@@ -60,7 +60,7 @@ class DoctrineEventListener implements EventSubscriberInterface
             }
         } else if ($action === 'update') {
             if (property_exists($entity, 'modifiedAt')) {
-                $entity->setModifiedAt(new \DateTime('now', new \DateTimeZone(self::BRT)));
+                $entity->setModifiedAt(new \DateTime('NOW'));
             }
         }
     }

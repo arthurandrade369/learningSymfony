@@ -28,7 +28,7 @@ final class Version20211015200516 extends AbstractMigration
         $this->addSql('ALTER TABLE books ADD CONSTRAINT FK_4A1B2A9240C86FCE FOREIGN KEY (publisher_id) REFERENCES publishers (id)');
         $this->addSql('ALTER TABLE oauth2_access_token ADD CONSTRAINT FK_454D9673F765F60E FOREIGN KEY (refresh_token_id) REFERENCES oauth2_refresh_token (id)');
         $this->addSql('ALTER TABLE oauth2_refresh_token ADD CONSTRAINT FK_4DD907329B6B5FBA FOREIGN KEY (account_id) REFERENCES accounts (id)');
-        $this->addSql('INSERT INTO accounts (name, email, scope, password, type, enabled, created_at, modified_at) VALUES ("admin", "admin@admin.com", "ROLE_ADMIN:", "21232f297a57a5a743894a0e4a801fc3", "admin", "1", "2021-10-15 17:05:31.039991", "2021-10-15 17:05:31.039991")');
+        $this->addSql('INSERT INTO accounts (name, email, scope, password, type, enabled, created_at, modified_at) VALUES ("admin", "admin@admin.com", "ROLE_ADMIN", "21232f297a57a5a743894a0e4a801fc3", "admin", 1, NOW(), NOW()');
     }
 
     public function down(Schema $schema): void

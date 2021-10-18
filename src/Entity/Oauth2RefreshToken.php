@@ -27,12 +27,12 @@ class OAuth2RefreshToken
     private string $refreshToken;
 
     /**
-     * @ORM\Column(type="datetime", name="created_at")
+     * @ORM\Column(type="datetimetz", name="created_at")
      */
     private \DateTime $createdAt;
 
     /**
-     * @ORM\Column(type="datetime", name="modified_at")
+     * @ORM\Column(type="datetimetz", name="modified_at")
      */
     private \DateTime $modifiedAt;
 
@@ -59,12 +59,12 @@ class OAuth2RefreshToken
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 

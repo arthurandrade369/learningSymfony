@@ -23,7 +23,7 @@ App\Entity\Account:
     scope:
       expose: true
       type: string
-      group: ["Show","List","Create"]
+      group: ["Show", "List", "Create"]
     type:
       expose: true
       type: string

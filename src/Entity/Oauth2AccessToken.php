@@ -41,9 +41,9 @@ class OAuth2AccessToken
     private \DateTime $expirationAt;
 
     /**
-     * @ORM\Column(type="string", name="type_token", length=32)
+     * @ORM\Column(type="string", name="token_type", length=32)
      */
-    private string $typeToken;
+    private string $tokenType;
 
     /**
      * @ORM\Column(type="string", length=12)
@@ -109,14 +109,14 @@ class OAuth2AccessToken
         return $this;
     }
 
-    public function getTypeToken(): ?string
+    public function getTokenType(): ?string
     {
-        return $this->typeToken;
+        return $this->tokenType;
     }
 
-    public function setTypeToken(string $typeToken): self
+    public function setTokenType(string $tokenType): self
     {
-        $this->typeToken = $typeToken;
+        $this->tokenType = $tokenType;
 
         return $this;
     }

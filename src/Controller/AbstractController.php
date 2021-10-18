@@ -49,7 +49,7 @@ class AbstractController extends BaseController
     public function view($body = null, $statusCode = null, $header = []): View
     {
         $view = new View($body, $statusCode, $header);
-        // $view->setGroups(['Default']);
+        $view->setGroups(array('Default'));
         return $view;
     }
 
@@ -143,10 +143,11 @@ class AbstractController extends BaseController
     public function showResponse(Request $request, $data, $contextGroup = null): Response
     {
         if (!is_object($data)) {
-            throw new Exception("An object is required", Response::HTTP_NOT_ACCEPTABLE);
+            throw new Exception("Function must receive an object", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $view = $this->view($data, Response::HTTP_OK);
+        $view->setGroups(array('Show'));
 
         return $this->handleView($view);
     }
@@ -160,7 +161,7 @@ class AbstractController extends BaseController
     public function dataTableResponse(Request $request, array $data, $contextGroup = null): Response
     {
         if (!is_array($data)) {
-            throw new Exception("An array is required", Response::HTTP_NOT_ACCEPTABLE);
+            throw new Exception("Function must receive an array", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         $body = array(
@@ -169,6 +170,7 @@ class AbstractController extends BaseController
         );
 
         $view = $this->view($body, Response::HTTP_OK);
+        $view->setGroups(array('List'));
 
         return $this->handleView($view);
     }
@@ -218,7 +220,7 @@ class AbstractController extends BaseController
     {
         $varToken = explode('_', $token);
 
-        if (!$varToken[0] && $varToken[1]) return null;
+        if (!$varToken[0] && !$varToken[1]) return null;
 
         return $varToken;
     }
