@@ -73,14 +73,14 @@ class AccountRepository extends ServiceEntityRepository
                     a.*
                 FROM
                     accounts AS a
-                    INNER JOIN oauth2_refresh_token AS rtk ON a.id = rtk.account_id
-                    INNER JOIN oauth2_access_token AS atk ON atk.refresh_token_id = rtk.id AND atk.id = :id
+                    INNER JOIN oauth2_refresh_token AS ort ON a.id = ort.account_id
+                    INNER JOIN oauth2_access_token AS oat ON oat.refresh_token_id = oat.id AND oat.id = :tokenId
                 WHERE
-                    atk.access_token = :token AND a.enabled = :enabled AND atk.expiration_at > NOW() 
+                    oat.access_token = :token AND a.enabled = :enabled AND oat.expiration_at < NOW()
                 LIMIT 1';
 
             $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-            $query->setParameter('id', $tokenId);
+            $query->setParameter('tokenId', $tokenId);
             $query->setParameter('token', $token);
             $query->setParameter('enabled', true);
 

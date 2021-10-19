@@ -119,17 +119,13 @@ class AbstractController extends BaseController
     {
         $exceptionCode = $exception->getCode() > 0 ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
 
-        $responseBody = $this->serializer(array(
+        $responseBody = array(
             'code' => $exceptionCode,
             'message' => $exception->getMessage(),
             'address' => $request->getClientIp()
-        ));
+        );
 
-        $view = new View($responseBody, $exceptionCode);
-        // $response = new Response();
-        // $response->setContent($responseBody);
-        // $response->setStatusCode($exceptionCode);
-        // $response->headers->set('Content-Type', 'application/json');
+        $view = $this->view($responseBody, $exceptionCode);
 
         return $this->handleView($view);
     }

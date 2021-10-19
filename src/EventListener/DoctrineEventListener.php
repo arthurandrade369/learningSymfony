@@ -20,26 +20,26 @@ class DoctrineEventListener implements EventSubscriberInterface
     public function getSubscribedEvents(): array
     {
         return [
-            Events::postPersist,
-            Events::postRemove,
-            Events::postUpdate
+            Events::prePersist,
+            Events::preRemove,
+            Events::preUpdate
         ];
     }
 
     // callback methods must be called exactly like the events they listen to;
     // they receive an argument of type LifecycleEventArgs, which gives you access
     // to both the entity object of the event and the entity manager itself
-    public function postPersist(LifecycleEventArgs $args): void
+    public function prePersist(LifecycleEventArgs $args): void
     {
         $this->logActivity('persist', $args);
     }
 
-    public function postRemove(LifecycleEventArgs $args): void
+    public function preRemove(LifecycleEventArgs $args): void
     {
         $this->logActivity('remove', $args);
     }
 
-    public function postUpdate(LifecycleEventArgs $args): void
+    public function preUpdate(LifecycleEventArgs $args): void
     {
         $this->logActivity('update', $args);
     }
