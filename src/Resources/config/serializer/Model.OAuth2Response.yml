@@ -1,27 +1,27 @@
 App\Model\OAuth2Response:
-  exclusion_policy: All
+  exclusion_policy: ALL
   properties:
     accessToken:
       expose: true
       type: string
-      group: [ "Show", "Create" ]
+      groups: [ 'Show', 'Create' ]
     address:
       expose: true
       type: string
-      group: [ "Show", "Create" ]
+      groups: [ 'Show', 'Create' ]
     expiresIn:
       expose: true
       type: integer
-      group: [ "Show", "Create" ]
+      groups: [ 'Show', 'Create' ]
     tokenType:
       expose: true
       type: string
-      group: [ "Show", "Create" ]
+      groups: [ 'Show', 'Create' ]
     scope:
       expose: true
       type: string
-      group: [ "Show", "Create" ]
+      groups: [ 'Show', 'Create' ]
     refreshToken:
       expose: true
       type: string
-      group: [ "Show", "Create" ]
+      groups: [ 'Show', 'Create' ]

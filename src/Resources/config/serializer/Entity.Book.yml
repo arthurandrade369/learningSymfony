@@ -1,27 +1,27 @@
 App\Entity\Book:
-  exclusion_policy: All
+  exclusion_policy: ALL
   properties:
     id:
       expose: true
       type: integer
-      group: ["List"]
+      groups: [ 'List' ]
     title:
       expose: true
       type: string
-      group: ["Show", "List", "Create"]
+      groups: [ 'Show', 'List', 'Create' ]
     author:
       expose: true
       type: string
-      group: ["Show", "List", "Create"]
+      groups: [ 'Show', 'List', 'Create' ]
     quantityPages:
       expose: true
       type: integer
-      group: ["Show", "List", "Create"]
+      groups: [ 'Show', 'List', 'Create' ]
     releaseDate:
       expose: true
       type: string
-      group: ["Show", "List", "Create"]
+      groups: [ 'Show', 'List', 'Create' ]
     publisher:
       expose: true
       type: App\Entity\Publisher
-      group: ["Show", "List", "Create"]
+      groups: [ 'Show', 'List', 'Create' ]

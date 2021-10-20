@@ -1,15 +1,15 @@
 App\Model\OAuth2Request:
-  exclusion_policy: All
+  exclusion_policy: ALL
   properties:
     username:
       expose: true
       type: string
-      group: ["Create", "Show"]
+      groups: [ 'Create', 'Show' ]
     password:
       expose: true
       type: string
-      group: ["Create", "Show"]
+      groups: [ 'Create', 'Show' ]
     grantType:
       expose: true
       type: string
-      group: ["Create", "Show"]
+      groups: [ 'Create', 'Show' ]

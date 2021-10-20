@@ -7,25 +7,25 @@ class View
     private $body;
     private int $statusCode;
     private string $format;
-    private array $header = [];
+    private array $headers = [];
     private array $groups = [];
     
-    public function __construct($body, $statusCode, $header = [])
+    public function __construct($body, $statusCode, $headers = [])
     {
         $this->body = $body;
         $this->statusCode = $statusCode;
-        $this->header = $header;
+        $this->headers = $headers;
         $this->format = 'json';
     }
 
-    public function getHeader(): array
+    public function getHeaders(): array
     {
-        return $this->header;
+        return $this->headers;
     }
 
-    public function setHeader(array $header): self
+    public function setHeaders(array $headers): self
     {
-        $this->header = $header;
+        $this->headers = $headers;
 
         return $this;
     }

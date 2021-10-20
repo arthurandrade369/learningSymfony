@@ -55,23 +55,17 @@ class AbstractController extends BaseController
 
     /**
      * @param View $view
-     * @return string
+     * @return Response
      */
     public function handleView(View $view): Response
     {
-        $context = null;
-        if ($view->getGroups()) {
-            $context = SerializationContext::create();
-            $context->setGroups($view->getGroups());
-        }
+        $context = SerializationContext::create();
+        $context->setGroups($view->getGroups());
 
-        $view->setHeader(['Content-Type' => $view->getContentType()]);
-        $data = $this->serializer($view->getBody(), $context);
+        $mData = $this->serializer->serialize($view->getBody(), $view->getFormat(), $context);
 
-        $response = new Response();
-        $response->setStatusCode($view->getStatusCode());
-        $response->headers->add($view->getHeader());
-        $response->setContent($data);
+        $response = new Response($mData, $view->getStatusCode(), $view->getHeaders());
+        $response->headers->set('Content-Type', $view->getContentType());
 
         return $response;
     }
@@ -138,37 +132,53 @@ class AbstractController extends BaseController
      */
     public function showResponse(Request $request, $data, $contextGroup = null): Response
     {
-        if (!is_object($data)) {
-            throw new Exception("Function must receive an object", Response::HTTP_INTERNAL_SERVER_ERROR);
+        try {
+            if (!is_object($data)) {
+                throw new Exception('Must receive an object', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            $view = $this->view($data, Response::HTTP_OK);
+            $contextGroup = array_merge(
+                array('Show'),
+                empty($contextGroup) ? array() : $contextGroup
+            );
+            $view->setGroups($contextGroup);
+
+            return $this->handleView($view);
+        } catch (Exception $exception) {
+            $this->exceptionResponse($request, $exception);
         }
-
-        $view = $this->view($data, Response::HTTP_OK);
-        $view->setGroups(array('Show'));
-
-        return $this->handleView($view);
     }
 
     /**
      * @param Request $request
      * @param array $data
      * @param string|null $contextGroup
-     * @return string
+     * @return Response
      */
     public function dataTableResponse(Request $request, array $data, $contextGroup = null): Response
     {
-        if (!is_array($data)) {
-            throw new Exception("Function must receive an array", Response::HTTP_INTERNAL_SERVER_ERROR);
+        try {
+            if (!is_array($data)) {
+                throw new Exception('Must receive an array', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            $body = array(
+                'iTotalRecords' => count($data),
+                'aaData' => $data
+            );
+
+            $view = $this->view($body, Response::HTTP_OK);
+            $contextGroup = array_merge(
+                array('Show'),
+                empty($contextGroup) ? array() : $contextGroup
+            );
+            $view->setGroups($contextGroup);
+
+            return $this->handleView($view);
+        } catch (Exception $exception) {
+            $this->exceptionResponse($request, $exception);
         }
-
-        $body = array(
-            "iTotalRecords" => count($data),
-            "aaData" => $data
-        );
-
-        $view = $this->view($body, Response::HTTP_OK);
-        $view->setGroups(array('List'));
-
-        return $this->handleView($view);
     }
 
     public function serializer($data, $contextGroup = null): string
