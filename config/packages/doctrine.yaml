@@ -12,7 +12,9 @@ doctrine:
         mappings:
             App:
                 is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
+                # type: annotation
+                # dir: '%kernel.project_dir%/src/Entity'
+                type: xml
+                dir: '%kernel.project_dir%/src/Resources/config/doctrine'
                 prefix: 'App\Entity'
                 alias: App

@@ -26,7 +26,7 @@ class AccountRepository extends ServiceEntityRepository
     {
         try {
             return $this->createQueryBuilder('a')
-                ->where('a.email = :email')
+                ->andWhere('a.email = :email')
                 ->setParameter('email', $email)
                 ->getQuery()->getResult();
         } catch (Exception $exception) {

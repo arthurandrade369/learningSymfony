@@ -2,44 +2,17 @@
 
 namespace App\Entity;
 
-use App\Entity\Account;
 use App\Repository\OAuth2RefreshTokenRepository;
-use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Account;
 
-/**
- * @ORM\Entity(repositoryClass=OAuth2RefreshTokenRepository::class)
- * @ORM\Table(name="oauth2_refresh_token")
- */
 class OAuth2RefreshToken
 {
     public const TTL = 3600;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
-     */
     private int $id;
-
-    /**
-     * @ORM\Column(type="string", length=64, name="refresh_token")
-     */
     private string $refreshToken;
-
-    /**
-     * @ORM\Column(type="datetimetz", name="created_at")
-     */
     private \DateTime $createdAt;
-
-    /**
-     * @ORM\Column(type="datetimetz", name="modified_at")
-     */
     private \DateTime $modifiedAt;
-
-    /**
-     * @ORM\OneToOne(targetEntity=Account::class)
-     * @ORM\JoinColumn(name="account_id")
-     */
     private Account $account;
 
     public function getId(): ?int

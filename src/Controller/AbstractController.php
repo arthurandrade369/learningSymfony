@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Account;
 use App\Model\View;
 use App\Provider\AccountUserProvider;
 use Exception;
@@ -170,7 +169,7 @@ class AbstractController extends BaseController
 
             $view = $this->view($body, Response::HTTP_OK);
             $contextGroup = array_merge(
-                array('Show'),
+                array('List'),
                 empty($contextGroup) ? array() : $contextGroup
             );
             $view->setGroups($contextGroup);
@@ -181,7 +180,12 @@ class AbstractController extends BaseController
         }
     }
 
-    public function serializer($data, $contextGroup = null): string
+    /**
+     * @param $data
+     * @param string|null $contextGroup
+     * @return string
+     */
+    public function serializer($data, ?string $contextGroup = null): string
     {
         $format = 'json';
         $context = null;
@@ -194,6 +198,14 @@ class AbstractController extends BaseController
         return $this->getSerializer()->serialize($data, $format, $context);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param $data
+     * @param $entity
+     * @param string|null $contextGroup
+     * @return mixed
+     */
     public function deserializer($data, $entity, $contextGroup = null)
     {
         $format = 'json';

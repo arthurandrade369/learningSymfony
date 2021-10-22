@@ -4,39 +4,54 @@ namespace App\Controller;
 
 use Exception;
 use App\Controller\AbstractController;
-use phpDocumentor\Reflection\Types\AbstractList;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AbstractCrudController extends AbstractController
 {
 
-    public function list($entity, Request $request, $contextGroup = null): Response
+    /**
+     * @param string $entity
+     * @param Request $request
+     * @return Response
+     */
+    public function list(string $entity, Request $request): Response
     {
         try {
             $data = $this->getDoctrine()->getRepository($entity)->findAll();
             if (!$data) AbstractController::errorNotFoundResponse($entity);
 
-            return $this->dataTableResponse($request,$data, $contextGroup);
+            return $this->dataTableResponse($request, $data);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
     }
 
-    public function show($id, $entity, Request $request): Response
+    /**
+     * @param integer $id
+     * @param string $entity
+     * @param Request $request
+     * @return Response
+     */
+    public function show(int $id, string $entity, Request $request): Response
     {
         try {
             $data = $this->getDoctrine()->getRepository($entity)->find($id);
             if (!$data) AbstractController::errorNotFoundResponse($entity);
             if (!$data instanceof $entity) AbstractController::errorInternalServerResponse($entity);
 
-            return $this->showResponse($request,$data);
+            return $this->showResponse($request, $data);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
     }
 
-    public function create($entity, Request $request): Response
+    /**
+     * @param string $entity
+     * @param Request $request
+     * @return Response
+     */
+    public function create(string $entity, Request $request): Response
     {
         try {
             $em = $this->getDoctrine()->getManager();
@@ -52,7 +67,13 @@ class AbstractCrudController extends AbstractController
         }
     }
 
-    public function update($id, $entity, Request $request): Response
+    /**
+     * @param integer $id
+     * @param string $entity
+     * @param Request $request
+     * @return Response
+     */
+    public function update(int $id, string $entity, Request $request): Response
     {
         try {
             $doctrine = $this->getDoctrine();
@@ -73,32 +94,13 @@ class AbstractCrudController extends AbstractController
         }
     }
 
-    public function delete($id, $entity, Request $request): Response
-    {
-        try {
-            $doctrine = $this->getDoctrine();
-
-            $data = $doctrine->getRepository($entity)->find($id);
-            if (!$data) AbstractController::errorNotFoundResponse($entity);
-            if (!$data instanceof $entity) AbstractController::errorInternalServerResponse($entity);
-
-            $em = $doctrine->getManager();
-            $em->remove($data);
-            $em->flush();
-
-            return new Response(null, Response::HTTP_NO_CONTENT);
-        } catch (Exception $exception) {
-            return $this->exceptionResponse($request, $exception);
-        }
-    }
-
     /**
-     * @param [type] $id
-     * @param [type] $entity
+     * @param int $id
+     * @param string $entity
      * @param Request $request
      * @return Response
      */
-    public function updateEnabledAction($id, $entity, Request $request): Response
+    public function updateEnabled(int $id, string $entity, Request $request): Response
     {
         try {
             $doctrine = $this->getDoctrine();
@@ -110,6 +112,31 @@ class AbstractCrudController extends AbstractController
             $object->setEnabled(!$object->getEnabled());
 
             $em = $doctrine->getManager();
+            $em->flush();
+
+            return new Response(null, Response::HTTP_NO_CONTENT);
+        } catch (Exception $exception) {
+            return $this->exceptionResponse($request, $exception);
+        }
+    }
+
+    /**
+     * @param integer $id
+     * @param string $entity
+     * @param Request $request
+     * @return Response
+     */
+    public function delete(int $id, string $entity, Request $request): Response
+    {
+        try {
+            $doctrine = $this->getDoctrine();
+
+            $data = $doctrine->getRepository($entity)->find($id);
+            if (!$data) AbstractController::errorNotFoundResponse($entity);
+            if (!$data instanceof $entity) AbstractController::errorInternalServerResponse($entity);
+
+            $em = $doctrine->getManager();
+            $em->remove($data);
             $em->flush();
 
             return new Response(null, Response::HTTP_NO_CONTENT);

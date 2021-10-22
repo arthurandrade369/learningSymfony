@@ -3,62 +3,19 @@
 namespace App\Entity;
 
 use App\Repository\AccountRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=AccountRepository::class)
- * @ORM\Table(name="accounts")
- */
 class Account implements UserInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
-     */
     private int $id;
-    
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
     private string $name;
-    
-    /**
-     * @ORM\Column(type="string", length=96, unique=true)
-     */
     private string $email;
-
-    /**
-     * @ORM\Column(type="string")
-     */
     private string $scope;
-
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
     private string $password;
-
     private string $plainPassword;
-    
-    /**
-     * @ORM\Column(type="string", length=32)
-     */
     private string $type;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
     private string $enabled;
-
-    /**
-     * @ORM\Column(type="datetime", name="created_at")
-     */
     private \Datetime $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", name="modified_at")
-     */
     private \Datetime $modifiedAt;
 
 
@@ -79,19 +36,11 @@ class Account implements UserInterface
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $scopes = explode(':',$this->scope);
@@ -115,9 +64,6 @@ class Account implements UserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getPassword(): string
     {
         return $this->password;
@@ -130,24 +76,15 @@ class Account implements UserInterface
         return $this;
     }
 
-    /**
-     * Returning a salt is only needed, if you are not using a modern
-     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
-     *
-     * @see UserInterface
-     */
     public function getSalt(): ?string
     {
-        return ("HowMuchIs1000-7?");
+        return ("thisissalt?");
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getType(): ?string
@@ -158,6 +95,18 @@ class Account implements UserInterface
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+ 
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -198,19 +147,10 @@ class Account implements UserInterface
         return $this;
     }
 
-    /**
-     * Get the value of plainPassword
-     */ 
     public function getPlainPassword()
     {
         return $this->plainPassword;
-    }
-
-    /**
-     * Set the value of plainPassword
-     *
-     * @return  self
-     */ 
+    } 
     public function setPlainPassword($plainPassword)
     {
         $this->plainPassword = $plainPassword;

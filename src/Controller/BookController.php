@@ -9,34 +9,35 @@ use App\Entity\Book;
 use App\Entity\Publisher;
 use Exception;
 use App\Controller\AbstractCrudController;
-use App\Entity\OAuth2RefreshToken;
 
-/**
- * @Route("/service/v1/book", name="book_")
- */
 class BookController extends AbstractCrudController
 {
 
     /**
-     * @Route("", name="list", methods={"GET"})
+     * @param Request $request
+     * @return Response
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request): Response
     {
         return $this->list(Book::class, $request);
     }
 
     /**
-     * @Route("/{id}", name="show", methods={"GET"})
+     * @param integer $id
+     * @param Request $request
+     * @return Response
      */
-    public function showAction($id, Request $request)
+    public function showAction(int $id, Request $request): Response
     {
         return $this->show($id, Book::class, $request);
     }
 
     /**
      * @Route("/", name="create", methods={"POST"})
+     * @param Request $request
+     * @return Response
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request): Response
     {
         try {
             $em = $this->getDoctrine()->getManager();
@@ -61,8 +62,11 @@ class BookController extends AbstractCrudController
 
     /**
      * @Route("/{id}", name="update", methods={"PUT"})
+     * @param integer $id
+     * @param Request $request
+     * @return Response
      */
-    public function updateAction($id, Request $request)
+    public function updateAction(int $id, Request $request): Response
     {
         try {
             $doctrine = $this->getDoctrine();
@@ -84,8 +88,11 @@ class BookController extends AbstractCrudController
 
     /**
      * @Route("/{id}", name="delete", methods={"DELETE"})
+     * @param integer $id
+     * @param Request $request
+     * @return Response
      */
-    public function deleteAction($id, Request $request)
+    public function deleteAction(int $id, Request $request): Response
     {
         return $this->delete($id, Book::class, $request);
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="App\Repository\OAuth2AccessTokenRepository" name="App\Entity\OAuth2AccessToken" table="oauth2_access_token">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    
+    <field name="accessToken" type="string" column="access_token" length="64" nullable="false"/>
+    <field name="createdAt" type="datetime" column="created_at" nullable="false"/>
+    <field name="modifiedAt" type="datetime" column="modified_at" nullable="false"/>
+    <field name="expirationAt" type="datetime" column="expiration_at" nullable="false"/>
+    <field name="tokenType" type="string" column="token_type" length="32" nullable="false"/>
+    <field name="address" type="string" column="address" length="12" nullable="false"/>
+
+    <one-to-one field="refreshToken" target-entity="App\Entity\OAuth2RefreshToken">
+      <join-columns>
+        <join-column name="refresh_token_id"/>
+      </join-columns>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

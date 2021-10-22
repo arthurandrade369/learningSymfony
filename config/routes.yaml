@@ -1,3 +1,13 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+book_list:
+  path:       /service/v1/book
+  controller: App\Controller\BookController::listAction
+  methods:    GET
+
+book_show:
+  path:       /service/v1/book/{id}
+  controller: App\Controller\BookController::showAction
+  methods:    GET

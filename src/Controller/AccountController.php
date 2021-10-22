@@ -5,9 +5,7 @@ namespace App\Controller;
 use App\Controller\AbstractCrudController;
 use App\Entity\Account;
 use App\Repository\AccountRepository;
-use DateTimeZone;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +15,34 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AccountController extends AbstractCrudController
 {
+
     /**
-     * @Route("", name="register",  methods={"POST"})
+     * @Route("", name="list", methods={"GET"})
+     * @param Request $request
+     * @return Response
      */
-    public function register(Request $request)
+    public function listAction(Request $request): Response
+    {
+        return $this->list(Account::class, $request);
+    }
+
+    /**
+     * @Route("/{id}", name="show", methods={"GET"})
+     * @param integer $id
+     * @param Request $request
+     * @return Response
+     */
+    public function showAction(int $id, Request $request): Response
+    {
+        return $this->show($id, Account::class, $request);
+    }
+
+    /**
+     * @Route("", name="create",  methods={"POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function createAction(Request $request): Response
     {
         try {
             $em = $this->getDoctrine()->getManager();
@@ -44,44 +66,31 @@ class AccountController extends AbstractCrudController
     }
 
     /**
-     * @Route("", name="list", methods={"GET"})
-     */
-    public function listAccounts(Request $request): Response
-    {
-        // $this->isGranted('ROLE_ADMIN');
-
-        try {
-            $em = $this->getDoctrine()->getManager();
-
-            $account = $em->getRepository(Account::class)->findAll();
-
-            return $this->dataTableResponse($request, $account, 'List');
-        } catch (Exception $exception) {
-            return $this->exceptionResponse($request, $exception);
-        }
-    }
-
-    /**
-     * @Route("/{id}", name="show", methods={"GET"})
-     */
-    public function showAccount($Id, Request $request)
-    {
-    }
-
-    /**
      * @Route("", name="update", methods={"UPDATE"})
+     * @param integer $id
+     * @param Request $request
+     * @return Response
      */
-    public function updateAccount($Id, Request $request)
+    public function updateAction(int $id, Request $request): Response
     {
+        return $this->update($id, Account::class, $request);
     }
 
     /**
      * @Route("", name="delete", methods={"DELETE"})
+     * @param integer $id
+     * @param Request $request
+     * @return Response
      */
-    public function deleteAccount($id, Request $request)
+    public function deleteAction(int $id, Request $request): Response
     {
+        return $this->delete($id, Account::class, $request);
     }
 
+    /**
+     * @param string $email
+     * @return boolean
+     */
     public function checkIsEmail(string $email): bool
     {
         $em = $this->getDoctrine()->getManager();

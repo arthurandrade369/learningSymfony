@@ -4,12 +4,12 @@ App\Model\OAuth2Request:
     username:
       expose: true
       type: string
-      groups: [ 'Create', 'Show' ]
+      groups: [ 'Show', 'Create' ]
     password:
       expose: true
       type: string
-      groups: [ 'Create', 'Show' ]
+      groups: [ 'Show', 'Create' ]
     grantType:
       expose: true
       type: string
-      groups: [ 'Create', 'Show' ]
+      groups: [ 'Show', 'Create' ]

@@ -6,43 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BookRepository;
 use App\Entity\Publisher;
 
-/**
- * @ORM\Entity(repositoryClass=BookRepository::class)
- * @ORM\Table(name="books")
- */
 class Book
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
-     */
     private int $id;
-
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
     private string $title;
-
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
     private string $author;
-
-    /**
-     * @ORM\Column(type="integer", name="quantity_pages")
-     */
     private int $quantityPages;
-
-    /**
-     * @ORM\Column(type="string", name="release_date", length=4)
-     */
     private int $releaseDate;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Publisher::class)
-     * @ORM\JoinColumn(name="publisher_id")
-     */
     private Publisher $publisher;
 
     public function getId(): ?int

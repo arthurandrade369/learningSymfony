@@ -17,6 +17,8 @@ class OAuth2Controller extends AbstractCrudController
 {
     /**
      * @Route("", name="login")
+     * @param Request $request
+     * @return Response
      */
     public function login(Request $request)
     {

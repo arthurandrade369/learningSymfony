@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\OAuth2RefreshToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,13 +25,13 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
 
     public function getRefreshTokenByAccount(int $accountId)
     {
-        $em = $this->getEntityManager();
         try {
+            $em = $this->getEntityManager();
             $rsm = new ResultSetMappingBuilder($em);
             $rsm->addRootEntityFromClassMetadata(OAuth2RefreshToken::class, 'ort');
             $sql = '
                 SELECT
-                    ort.id, ort.account_id, ort.refresh_token, ort.created_at, ort.modified_at
+                    ort.*
                 FROM
                     oauth2_refresh_token AS ort
                     INNER JOIN accounts AS a ON ort.account_id = :accountId
@@ -37,7 +39,7 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
 
             $query = $em->createNativeQuery($sql, $rsm);
             $query->setParameter('accountId', $accountId);
-            
+
             return $query->getResult();
         } catch (NonUniqueResultException $exception) {
             error_log($exception->getMessage());
