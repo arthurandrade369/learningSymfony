@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\AccountRepository;
+use DateTime;
+use DateTimeInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class Account implements UserInterface
@@ -15,20 +16,29 @@ class Account implements UserInterface
     private string $plainPassword;
     private string $type;
     private string $enabled;
-    private \Datetime $createdAt;
-    private \Datetime $modifiedAt;
+    private DateTime $createdAt;
+    private Datetime $modifiedAt;
 
-
+    /**
+     * @return integer|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * @param string $email
+     * @return self
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -36,14 +46,20 @@ class Account implements UserInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getUsername(): string
     {
         return $this->email;
     }
 
+    /**
+     * @return array
+     */
     public function getRoles(): array
     {
-        $scopes = explode(':',$this->scope);
+        $scopes = explode(':', $this->scope);
 
         $roles = $scopes;
         // guarantee every user at least has ROLE_USER
@@ -52,11 +68,18 @@ class Account implements UserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @return string
+     */
     public function getScope(): string
     {
         return $this->scope;
     }
 
+    /**
+     * @param string $scope
+     * @return self
+     */
     public function setScope(string $scope): self
     {
         $this->scope = $scope;
@@ -64,11 +87,18 @@ class Account implements UserInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
+    /**
+     * @param string $password
+     * @return self
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -76,22 +106,35 @@ class Account implements UserInterface
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getSalt(): ?string
     {
         return ("thisissalt?");
     }
 
+    /**
+     * @return void
+     */
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
         $this->plainPassword = null;
     }
 
+    /**
+     * @return string|null
+     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
+    /**
+     * @param string $type
+     * @return self
+     */
     public function setType(string $type): self
     {
         $this->type = $type;
@@ -99,47 +142,75 @@ class Account implements UserInterface
         return $this;
     }
 
-    public function getEnabled()
+    /**
+     * @return Bool|null
+     */
+    public function getEnabled(): ?Bool
     {
         return $this->enabled;
     }
- 
-    public function setEnabled($enabled)
+
+    /**
+     * @param Bool $enabled
+     * @return self
+     */
+    public function setEnabled(Bool $enabled): self
     {
         $this->enabled = $enabled;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    /**
+     * @param DateTimeInterface $createdAt
+     * @return self
+     */
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getModifiedAt(): ?\DateTimeInterface
+    /**
+     * @return DateTimeInterface|null
+     */
+    public function getModifiedAt(): ?DateTimeInterface
     {
         return $this->modifiedAt;
     }
 
-    public function setModifiedAt(\DateTimeInterface $modifiedAt): self
+    /**
+     * @param DateTimeInterface $modifiedAt
+     * @return self
+     */
+    public function setModifiedAt(DateTimeInterface $modifiedAt): self
     {
         $this->modifiedAt = $modifiedAt;
 
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return self
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -147,11 +218,19 @@ class Account implements UserInterface
         return $this;
     }
 
-    public function getPlainPassword()
+    /**
+     * @return string|null
+     */
+    public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
-    } 
-    public function setPlainPassword($plainPassword)
+    }
+
+    /**
+     * @param string $plainPassword
+     * @return self
+     */
+    public function setPlainPassword(string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
 

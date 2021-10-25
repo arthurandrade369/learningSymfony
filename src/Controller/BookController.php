@@ -10,6 +10,9 @@ use App\Entity\Publisher;
 use Exception;
 use App\Controller\AbstractCrudController;
 
+/**
+ * @Route("/service/v1/book", name="book_")
+ */
 class BookController extends AbstractCrudController
 {
 

@@ -1,0 +1,9 @@
+oauth2_me:
+  path:       /service/v1/oauth2
+  controller: App\Controller\BookController::me
+  methods:    GET
+
+oauth2_login:
+  path:       /service/v1/oauth2
+  controller: App\Controller\BookController::login
+  methods:    POST

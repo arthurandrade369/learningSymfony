@@ -11,7 +11,7 @@
     
     <one-to-one field="account" target-entity="App\Entity\Account">
       <join-columns>
-        <join-column name="account_id" referenced-column-name="id" nullable="1"/>
+        <join-column name="account_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </one-to-one>
   </entity>

@@ -1,0 +1,16 @@
+account_list:
+  path:       /service/v1/account
+  controller: App\Controller\AccountController::listAction
+  methods:    GET
+
+account_show:
+  path:         /service/v1/account/{id}
+  controller:   App\Controller\AccountController::showAction
+  methods:      GET
+  requirements:
+    '\d+'
+
+account_create:
+  path:       /service/v1/account
+  controller: App\Controller\AccountController::createAction
+  methods:    POST
