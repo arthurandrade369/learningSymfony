@@ -8,16 +8,11 @@ use App\Repository\AccountRepository;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/service/v1/account", name="account_")
- */
 class AccountController extends AbstractCrudController
 {
 
     /**
-     * @Route("", name="list", methods={"GET"})
      * @param Request $request
      * @return Response
      */
@@ -27,7 +22,6 @@ class AccountController extends AbstractCrudController
     }
 
     /**
-     * @Route("/{id}", name="show", methods={"GET"})
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -38,7 +32,6 @@ class AccountController extends AbstractCrudController
     }
 
     /**
-     * @Route("", name="create",  methods={"POST"})
      * @param Request $request
      * @return Response
      */
@@ -49,7 +42,7 @@ class AccountController extends AbstractCrudController
             
             $account = $this->getObjectPerRequest($request, Account::class);
             if(!$account instanceof Account){
-                throw new Exception("Error Processing Request", 500);
+                AbstractController::errorInternalServerResponse(Account::class);
             }
             
             if (!$this->checkIsEmail($account->getEmail())) {
@@ -59,14 +52,13 @@ class AccountController extends AbstractCrudController
                 throw new Exception("Email already exists", Response::HTTP_CONFLICT);
             }
 
-            return new Response(null, Response::HTTP_NO_CONTENT);
+            return new Response(null, Response::HTTP_CREATED);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
     }
 
     /**
-     * @Route("", name="update", methods={"UPDATE"})
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -77,7 +69,6 @@ class AccountController extends AbstractCrudController
     }
 
     /**
-     * @Route("", name="delete", methods={"DELETE"})
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -98,8 +89,8 @@ class AccountController extends AbstractCrudController
         $repo = $em->getRepository(Account::class);
         if(!$repo instanceof AccountRepository) throw new Exception("Error Processing Request", 500);
         
-        $data = $repo->getByEmail($email);
-        if (count($data) > 0) return true;
+        $account = $repo->getAccountByEmail($email);
+        if (count($account) > 0) return true;
 
         return false;
     }

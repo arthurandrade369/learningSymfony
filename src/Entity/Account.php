@@ -13,7 +13,7 @@ class Account implements UserInterface
     private string $email;
     private string $scope;
     private string $password;
-    private string $plainPassword;
+    private ?string $plainPassword = null;
     private string $type;
     private string $enabled;
     private DateTime $createdAt;

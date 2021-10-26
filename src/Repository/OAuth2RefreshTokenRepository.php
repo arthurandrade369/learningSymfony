@@ -40,7 +40,7 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
             $query = $em->createNativeQuery($sql, $rsm);
             $query->setParameter('accountId', $accountId);
 
-            return $query->getResult();
+            return $query->getOneOrNullResult();
         } catch (NonUniqueResultException $exception) {
             error_log($exception->getMessage());
             return null;

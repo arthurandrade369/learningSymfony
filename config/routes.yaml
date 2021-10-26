@@ -1,4 +1,4 @@
-routes_service_v1:
+app_directory:
   # loads routes in that directory
   resource: 'routes/service/v1/'
   type: directory

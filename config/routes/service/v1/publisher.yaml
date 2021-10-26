@@ -1,16 +1,30 @@
 publisher_list:
-  path:       /service/v1/publisher
+  path: /service/v1/publisher
   controller: App\Controller\PublisherController::listAction
-  methods:    GET
+  methods: GET
 
 publisher_show:
-  path:         /service/v1/publisher/{id}
-  controller:   App\Controller\PublisherController::showAction
-  methods:      GET
+  path: /service/v1/publisher/{id}
+  controller: App\Controller\PublisherController::showAction
+  methods: GET
   requirements:
-    '\d+'
+    id: '\d+'
 
 publisher_create:
-  path:       /service/v1/publisher
+  path: /service/v1/publisher
   controller: App\Controller\PublisherController::createAction
-  methods:    POST
+  methods: POST
+
+publisher_update:
+  path: /service/v1/publisher/{id}
+  controller: App\Controller\PublisherController::updateAction
+  methods: UPDATE
+  requirements:
+    id: '\d+'
+
+publisher_delete:
+  path: /service/v1/publisher/{id}
+  controller: App\Controller\PublisherController::deleteAction
+  methods: DELETE
+  requirements:
+    id: '\d+'

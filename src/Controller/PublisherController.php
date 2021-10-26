@@ -17,7 +17,7 @@ class PublisherController extends AbstractCrudController
      * @param Request $request
      * @return Response
      */
-    public function listPublishers(Request $request)
+    public function listAction(Request $request)
     {
         return $this->list(Publisher::class, $request);
     }
@@ -28,7 +28,7 @@ class PublisherController extends AbstractCrudController
      * @param Request $request
      * @return Response
      */
-    public function showPublisher(int $id, Request $request)
+    public function showAction(int $id, Request $request)
     {
         return $this->show($id, Publisher::class,$request);
     }
@@ -38,7 +38,7 @@ class PublisherController extends AbstractCrudController
      * @param Request $request
      * @return Response
      */
-    public function createPublisher(Request $request)
+    public function createAction(Request $request)
     {
         return $this->create(Publisher::class, $request);
     }
@@ -49,7 +49,7 @@ class PublisherController extends AbstractCrudController
      * @param Request $request
      * @return Response
      */
-    public function updateCompany(int $id, Request $request)
+    public function updateAction(int $id, Request $request)
     {
         return $this->update($id, Publisher::class, $request);
     }
@@ -60,7 +60,7 @@ class PublisherController extends AbstractCrudController
      * @param Request $request
      * @return Response
      */
-    public function deleteCompany(int $id, Request $request)
+    public function deleteAction(int $id, Request $request)
     {
         return $this->delete($id, Publisher::class, $request);
     }

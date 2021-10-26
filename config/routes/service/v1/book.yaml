@@ -1,16 +1,30 @@
 book_list:
-  path:       /service/v1/book
+  path: /service/v1/book
   controller: App\Controller\BookController::listAction
-  methods:    GET
+  methods: GET
 
 book_show:
-  path:         /service/v1/book/{id}
-  controller:   App\Controller\BookController::showAction
-  methods:      GET
+  path: /service/v1/book/{id}
+  controller: App\Controller\BookController::showAction
+  methods: GET
   requirements:
-    '\d+'
+    id: '\d+'
 
 book_create:
-  path:       /service/v1/book
+  path: /service/v1/book
   controller: App\Controller\BookController::createAction
-  methods:    POST
+  methods: POST
+
+book_update:
+  path: /service/v1/book/{id}
+  controller: App\Controller\BookController::updateAction
+  methods: UPDATE
+  requirements:
+    id: '\d+'
+
+book_delete:
+  path: /service/v1/book/{id}
+  controller: App\Controller\BookController::deleteAction
+  methods: DELETE
+  requirements:
+    id: '\d+'

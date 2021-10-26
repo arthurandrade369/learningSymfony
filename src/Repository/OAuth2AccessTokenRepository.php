@@ -6,6 +6,7 @@ use App\Entity\Account;
 use App\Entity\OAuth2AccessToken;
 use App\Entity\OAuth2RefreshToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -25,7 +26,28 @@ class OAuth2AccessTokenRepository extends ServiceEntityRepository
 
     public function getAccessToken($refreshTokenId, $refreshToken)
     {
-        
+        try {
+            $em = $this->getEntityManager();
+
+            $rsm = new ResultSetMappingBuilder($em);
+            $rsm->addRootEntityFromClassMetadata(OAuth2AccessToken::class, 'oat');
+            $sql = '
+                SELECT
+                    oat.*
+                FROM
+                    oauth2_access_token AS oat
+                    INNER JOIN oauth2_refresh_token AS ort ON oat.refresh_token_id = :refreshTokenId AND ort.refresh_token = :refreshToken
+                LIMIT 1 ';
+
+            $query = $em->createNativeQuery($sql, $rsm);
+            $query->setParameter('refreshTokenId', $refreshTokenId);
+            $query->setParameter('refreshToken', $refreshToken);
+
+            return $query->getOneOrNullResult();
+        } catch (NonUniqueResultException $exception) {
+            error_log($exception->getMessage());
+            return null;
+        }
     }
     // /**
     //  * @return AcessToken[] Returns an array of AcessToken objects

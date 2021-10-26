@@ -1,16 +1,30 @@
 account_list:
-  path:       /service/v1/account
+  path: /service/v1/account
   controller: App\Controller\AccountController::listAction
-  methods:    GET
+  methods: GET
 
 account_show:
-  path:         /service/v1/account/{id}
-  controller:   App\Controller\AccountController::showAction
-  methods:      GET
+  path: /service/v1/account/{id}
+  controller: App\Controller\AccountController::showAction
+  methods: GET
   requirements:
-    '\d+'
+    id: '\d+'
 
 account_create:
-  path:       /service/v1/account
+  path: /service/v1/account
   controller: App\Controller\AccountController::createAction
-  methods:    POST
+  methods: POST
+
+account_update:
+  path: /service/v1/account/{id}
+  controller: App\Controller\AccountController::updateAction
+  methods: UPDATE
+  requirements:
+    id: '\d+'
+
+account_delete:
+  path: /service/v1/account/{id}
+  controller: App\Controller\AccountController::deleteAction
+  methods: DELETE
+  requirements:
+    id: '\d+'

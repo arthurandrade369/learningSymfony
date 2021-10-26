@@ -24,6 +24,9 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
         $this->AccountUserProvider = $AccountUserProvider;
     }
 
+    /**
+     * @return AccountUserProvider
+     */
     public function getAccountUserProvider(): AccountUserProvider
     {
         return $this->AccountUserProvider;
@@ -34,13 +37,16 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public static function getAuthorizedIp(): array
     {
-        return ['127.0.0.1', 'localhost'];
+        return ['sim'];
     }
 
     /**
      * Called on every request to decide if this authenticator should be
      * used for the request. Returning `false` will cause this authenticator
      * to be skipped.
+     * 
+     * @param Request $request
+     * @return boolean
      */
     public function supports(Request $request): bool
     {
@@ -66,12 +72,15 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
     /**
      * Called on every request. Return whatever credentials you want to
      * be passed to getUser() as $credentials.
+     * 
+     * @param Request $request
+     * @return array
      */
     public function getCredentials(Request $request): array
     {
         $this->token = AbstractController::separateAuthorization($this->token);
         $token = AbstractController::separateToken($this->token);
-        
+
         return array(
             'tokenId' => $token[0],
             'token' => $token[1],
@@ -80,6 +89,11 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
         );
     }
 
+    /**
+     * @param $credentials
+     * @param UserProviderInterface $userProvider
+     * @return UserInterface|null
+     */
     public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
         $tokenId = $credentials['tokenId'];
@@ -87,8 +101,7 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
         $tokenType = $credentials['tokenType'];
         $address = $credentials['address'];
 
-        if($token === null && !in_array($address, TokenAuthenticatorSecurity::getAuthorizedIp()))
-        {
+        if ($token === null && !in_array($address, TokenAuthenticatorSecurity::getAuthorizedIp())) {
             return null;
         }
 
@@ -101,17 +114,33 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
         }
     }
 
+    /**
+     * @param $credentials
+     * @param UserInterface $user
+     * @return boolean
+     */
     public function checkCredentials($credentials, UserInterface $user): bool
     {
         return true;
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param $providerKey
+     * @return Response|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         // on success, let the request continue
         return null;
     }
 
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return Response|null
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
@@ -127,6 +156,10 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
 
     /**
      * Called when authentication is needed, but it's not sent
+     * 
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return Response
      */
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
@@ -138,6 +171,9 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
+    /**
+     * @return boolean
+     */
     public function supportsRememberMe(): bool
     {
         return false;

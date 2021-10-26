@@ -19,7 +19,6 @@ class AbstractCrudController extends AbstractController
     {
         try {
             $data = $this->getDoctrine()->getRepository($entity)->findAll();
-            if (!$data) AbstractController::errorNotFoundResponse($entity);
 
             return $this->dataTableResponse($request, $data);
         } catch (Exception $exception) {

@@ -236,7 +236,7 @@ class AbstractController extends BaseController
      */
     public static function separateToken(string $token): ?array
     {
-        $varToken = explode('_', $token);
+        $varToken = explode('_', $token, 2);
 
         if (!$varToken[0] && !$varToken[1]) return null;
 

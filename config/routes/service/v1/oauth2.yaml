@@ -1,9 +1,14 @@
 oauth2_me:
-  path:       /service/v1/oauth2
-  controller: App\Controller\BookController::me
-  methods:    GET
+  path: /service/v1/oauth2
+  controller: App\Controller\OAuth2Controller::me
+  methods: GET
 
 oauth2_login:
-  path:       /service/v1/oauth2
-  controller: App\Controller\BookController::login
-  methods:    POST
+  path: /service/v1/oauth2
+  controller: App\Controller\OAuth2Controller::login
+  methods: POST
+
+oauth2_logout:
+  path: /service/v1/oauth2
+  controller: App\Controller\OAuth2Controller::logout
+  methods: DELETE

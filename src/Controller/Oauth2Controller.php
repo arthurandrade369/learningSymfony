@@ -17,8 +17,6 @@ class OAuth2Controller extends AbstractCrudController
     public function login(Request $request): Response
     {
         try {
-            $em = $this->getDoctrine()->getManager();
-
             $OAuth2Request = $this->getObjectPerRequest($request, OAuth2Request::class);
             if (!$OAuth2Request instanceof OAuth2Request) {
                 throw new Exception("Error Processing Request", Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -37,6 +35,25 @@ class OAuth2Controller extends AbstractCrudController
             }
 
             return $this->showResponse($request, $oauth2Response);
+        } catch (Exception $exception) {
+            return $this->exceptionResponse($request, $exception);
+        }
+    }
+
+    public function logout()
+    {
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function me(Request $request): Response
+    {
+        try {
+            $user = $this->getUser();
+
+            return $this->showResponse($request, $user);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

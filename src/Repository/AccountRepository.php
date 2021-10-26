@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Account;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -22,41 +23,24 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
-    public function getByEmail($email)
+    public function getAccountByEmail($email)
     {
         try {
-            return $this->createQueryBuilder('a')
-                ->andWhere('a.email = :email')
-                ->setParameter('email', $email)
-                ->getQuery()->getResult();
-        } catch (Exception $exception) {
-            error_log($exception->getMessage());
-            return null;
-        }
-    }
-
-    public function getOnlyOne($email)
-    {
-        try {
-            $sql = "
-            SELECT
-                a.*
-            FROM
-                accounts AS a
-            WHERE
-                a.email = :email
-            LIMIT 1";
-
             $rsm = new ResultSetMappingBuilder($this->getEntityManager());
             $rsm->addRootEntityFromClassMetadata(Account::class, 'a');
-            $rsm->addScalarResult('email', 'email');
-            $rsm->addScalarResult('password', 'password');
-            $rsm->addScalarResult('password', 'password');
+            $sql = '
+                SELECT
+                    a.*
+                FROM
+                    accounts AS a
+                WHERE 
+                    a.email = :email
+                LIMIT 1';
 
             $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
             $query->setParameter('email', $email);
 
-            return $query->getResult();
+            return $query->getOneOrNullResult();
         } catch (NonUniqueResultException $exception) {
             error_log($exception->getMessage());
             return null;
@@ -84,8 +68,8 @@ class AccountRepository extends ServiceEntityRepository
             $query->setParameter('token', $token);
             $query->setParameter('enabled', true);
 
-            return $query->getResult();
-        } catch (Exception $exception) {
+            return $query->getOneOrNullResult();
+        } catch (NonUniqueResultException $exception) {
             error_log($exception->getMessage());
             return null;
         }
