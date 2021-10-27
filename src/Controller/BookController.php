@@ -3,16 +3,12 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Book;
 use App\Entity\Publisher;
 use Exception;
 use App\Controller\AbstractCrudController;
 
-/**
- * @Route("/service/v1/book", name="book_")
- */
 class BookController extends AbstractCrudController
 {
 
@@ -36,7 +32,6 @@ class BookController extends AbstractCrudController
     }
 
     /**
-     * @Route("/", name="create", methods={"POST"})
      * @param Request $request
      * @return Response
      */
@@ -64,7 +59,6 @@ class BookController extends AbstractCrudController
     }
 
     /**
-     * @Route("/{id}", name="update", methods={"PUT"})
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -90,7 +84,6 @@ class BookController extends AbstractCrudController
     }
 
     /**
-     * @Route("/{id}", name="delete", methods={"DELETE"})
      * @param integer $id
      * @param Request $request
      * @return Response

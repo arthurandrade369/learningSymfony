@@ -82,25 +82,6 @@ class OAuth2RefreshToken
     }
 
     /**
-     * @return DateTimeInterface|null
-     */
-    public function getExpirationAt(): ?DateTimeInterface
-    {
-        return $this->expirationAt;
-    }
-
-    /**
-     * @param DateTimeInterface $expirationAt
-     * @return self
-     */
-    public function setExpirationAt(DateTimeInterface $expirationAt): self
-    {
-        $this->expirationAt = $expirationAt;
-
-        return $this;
-    }
-
-    /**
      * @return Account|null
      */
     public function getAccount(): ?Account

@@ -20,7 +20,8 @@ class OAuth2Request
     }
 
     /**
-     * @return  self
+     * @param string $username
+     * @return self
      */
     public function setUsername(string $username): self
     {
@@ -38,7 +39,8 @@ class OAuth2Request
     }
 
     /**
-     * @return  self
+     * @param string $password
+     * @return self
      */
     public function setPassword(string $password): self
     {
@@ -56,7 +58,8 @@ class OAuth2Request
     }
 
     /**
-     * @return  self
+     * @param string $grantType
+     * @return self
      */
     public function setGrantType(string $grantType): self
     {

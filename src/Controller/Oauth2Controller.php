@@ -40,8 +40,16 @@ class OAuth2Controller extends AbstractCrudController
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
+        try {
+            $mToken = AbstractController::separateAuthorization($request->request->headers->get('Authorization'));
+            $token = AbstractController::separateToken($mToken);
+
+
+        } catch (Exception $exception) {
+            return $this->exceptionResponse($request, $exception);
+        }
     }
 
     /**

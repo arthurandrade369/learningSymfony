@@ -17,6 +17,10 @@ class AbstractController extends BaseController
     private SerializerInterface $serializer;
     private AccountUserProvider $accountUserProvider;
 
+    /**
+     * @param SerializerInterface $serializer
+     * @param AccountUserProvider $accountUserProvider
+     */
     public function __construct(SerializerInterface $serializer, AccountUserProvider $accountUserProvider)
     {
         $this->serializer = $serializer;
@@ -45,7 +49,7 @@ class AbstractController extends BaseController
      * @param array $header
      * @return View
      */
-    public function view($body = null, $statusCode = null, $header = []): View
+    public function view($body = null, ?int $statusCode = null, array $header = []): View
     {
         $view = new View($body, $statusCode, $header);
         $view->setGroups(array('Default'));
@@ -129,7 +133,7 @@ class AbstractController extends BaseController
      * @param string|null $contextGroup
      * @return Response
      */
-    public function showResponse(Request $request, $data, $contextGroup = null): Response
+    public function showResponse(Request $request, $data, ?string $contextGroup = null): Response
     {
         try {
             if (!is_object($data)) {
@@ -155,7 +159,7 @@ class AbstractController extends BaseController
      * @param string|null $contextGroup
      * @return Response
      */
-    public function dataTableResponse(Request $request, array $data, $contextGroup = null): Response
+    public function dataTableResponse(Request $request, array $data, ?string $contextGroup = null): Response
     {
         try {
             if (!is_array($data)) {
@@ -181,7 +185,7 @@ class AbstractController extends BaseController
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param string|null $contextGroup
      * @return string
      */
@@ -199,14 +203,12 @@ class AbstractController extends BaseController
     }
 
     /**
-     * Undocumented function
-     *
-     * @param $data
-     * @param $entity
+     * @param mixed $data
+     * @param string $entity
      * @param string|null $contextGroup
      * @return mixed
      */
-    public function deserializer($data, $entity, $contextGroup = null)
+    public function deserializer($data, string $entity, ?string $contextGroup = null)
     {
         $format = 'json';
         $context = null;

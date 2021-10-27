@@ -24,7 +24,7 @@ class OAuth2AccessTokenRepository extends ServiceEntityRepository
         parent::__construct($registry, OAuth2AccessToken::class);
     }
 
-    public function getAccessToken($refreshTokenId, $refreshToken)
+    public function getAccessToken($refreshTokenId, $refreshToken, $address)
     {
         try {
             $em = $this->getEntityManager();
@@ -37,11 +37,14 @@ class OAuth2AccessTokenRepository extends ServiceEntityRepository
                 FROM
                     oauth2_access_token AS oat
                     INNER JOIN oauth2_refresh_token AS ort ON oat.refresh_token_id = :refreshTokenId AND ort.refresh_token = :refreshToken
+                WHERE
+                    oat.address = :address
                 LIMIT 1 ';
 
             $query = $em->createNativeQuery($sql, $rsm);
             $query->setParameter('refreshTokenId', $refreshTokenId);
             $query->setParameter('refreshToken', $refreshToken);
+            $query->setParameter('address', $address);
 
             return $query->getOneOrNullResult();
         } catch (NonUniqueResultException $exception) {

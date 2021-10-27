@@ -47,9 +47,9 @@ class Account implements UserInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->email;
     }
@@ -69,9 +69,9 @@ class Account implements UserInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getScope(): string
+    public function getScope(): ?string
     {
         return $this->scope;
     }
@@ -88,9 +88,9 @@ class Account implements UserInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -143,18 +143,18 @@ class Account implements UserInterface
     }
 
     /**
-     * @return Bool|null
+     * @return boolean|null
      */
-    public function getEnabled(): ?Bool
+    public function getEnabled(): ?bool
     {
         return $this->enabled;
     }
 
     /**
-     * @param Bool $enabled
+     * @param boolean $enabled
      * @return self
      */
-    public function setEnabled(Bool $enabled): self
+    public function setEnabled(bool $enabled): self
     {
         $this->enabled = $enabled;
 
@@ -162,7 +162,7 @@ class Account implements UserInterface
     }
 
     /**
-     * @return \DateTimeInterface|null
+     * @return DateTimeInterface|null
      */
     public function getCreatedAt(): ?DateTimeInterface
     {

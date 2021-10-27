@@ -12,7 +12,7 @@ date_default_timezone_set('America/Sao_Paulo');
 class DoctrineEventListener implements EventSubscriberInterface
 {
     /**
-     * This method can only return th event names; you cannot define a
+     * This method can only return the event names; you cannot define a
      * custom method name to execute when each event triggers
      *
      * @return array
@@ -56,6 +56,7 @@ class DoctrineEventListener implements EventSubscriberInterface
             if ($entity instanceof Account) {
                 if (property_exists($entity, 'plainPassword')) {
                     $entity->setPassword(md5($entity->getPlainPassword()));
+                    $entity->setEnabled(true);
                 }
             }
         } else if ($action === 'update') {

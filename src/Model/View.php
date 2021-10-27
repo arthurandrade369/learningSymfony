@@ -10,7 +10,12 @@ class View
     private array $headers = [];
     private array $groups = [];
     
-    public function __construct($body, $statusCode, $headers = [])
+    /**
+     * @param mixed $body
+     * @param integer $statusCode
+     * @param array $headers
+     */
+    public function __construct($body, int $statusCode, array $headers = [])
     {
         $this->body = $body;
         $this->statusCode = $statusCode;
@@ -18,11 +23,18 @@ class View
         $this->format = 'json';
     }
 
-    public function getHeaders(): array
+    /**
+     * @return array|null
+     */
+    public function getHeaders(): ?array
     {
         return $this->headers;
     }
 
+    /**
+     * @param array $headers
+     * @return self
+     */
     public function setHeaders(array $headers): self
     {
         $this->headers = $headers;
@@ -30,11 +42,18 @@ class View
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getBody()
     {
         return $this->body;
     }
 
+    /**
+     * @param mixed $body
+     * @return self
+     */
     public function setBody($body): self
     {
         $this->body = $body;
@@ -42,11 +61,18 @@ class View
         return $this;
     }
 
-    public function getStatusCode(): int
+    /**
+     * @return integer|null
+     */
+    public function getStatusCode(): ?int
     {
         return $this->statusCode;
     }
 
+    /**
+     * @param integer $statusCode
+     * @return self
+     */
     public function setStatusCode(int $statusCode): self
     {
         $this->statusCode = $statusCode;
@@ -54,11 +80,18 @@ class View
         return $this;
     }
  
-    public function getFormat(): string
+    /**
+     * @return string|null
+     */
+    public function getFormat(): ?string
     {
         return $this->format;
     }
  
+    /**
+     * @param string $format
+     * @return self
+     */
     public function setFormat(string $format): self
     {
         $this->format = $format;
@@ -66,11 +99,18 @@ class View
         return $this;
     }
 
-    public function getGroups(): array
+    /**
+     * @return array|null
+     */
+    public function getGroups(): ?array
     {
         return $this->groups;
     }
 
+    /**
+     * @param array $groups
+     * @return self
+     */
     public function setGroups(array $groups): self
     {
         $this->groups = $groups;
@@ -78,7 +118,10 @@ class View
         return $this;
     }
 
-    public function getContentType(): string
+    /**
+     * @return string|null
+     */
+    public function getContentType(): ?string
     {
         switch ($this->format) {
             case 'json':

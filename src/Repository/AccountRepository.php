@@ -60,7 +60,7 @@ class AccountRepository extends ServiceEntityRepository
                     INNER JOIN oauth2_refresh_token AS ort ON a.id = ort.account_id
                     INNER JOIN oauth2_access_token AS oat ON oat.refresh_token_id = oat.id AND oat.id = :tokenId
                 WHERE
-                    oat.access_token = :token AND a.enabled = :enabled AND oat.expiration_at < NOW()
+                    oat.access_token = :token AND a.enabled = :enabled AND oat.expiration_at > NOW()
                 LIMIT 1';
 
             $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);

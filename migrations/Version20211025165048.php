@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Model\Patch;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -28,7 +29,9 @@ final class Version20211025165048 extends AbstractMigration
         $this->addSql('ALTER TABLE books ADD CONSTRAINT FK_4A1B2A9240C86FCE FOREIGN KEY (publisher_id) REFERENCES publishers (id)');
         $this->addSql('ALTER TABLE oauth2_access_token ADD CONSTRAINT FK_454D9673F765F60E FOREIGN KEY (refresh_token_id) REFERENCES oauth2_refresh_token (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE oauth2_refresh_token ADD CONSTRAINT FK_4DD907329B6B5FBA FOREIGN KEY (account_id) REFERENCES accounts (id)');
-        $this->addSql('INSERT INTO accounts (name, email, scope, password, type, enabled, created_at, modified_at) VALUES ("admin", "admin@admin.com", "ROLE_ADMIN", "21232f297a57a5a743894a0e4a801fc3", "admin", 1, NOW(), NOW())');
+    
+        $patch = new Patch();
+        foreach ($patch->version_1_0() as $sql) $this->addSql($sql);
     }
 
     public function down(Schema $schema): void

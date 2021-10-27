@@ -19,15 +19,18 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
     private ?string $tokenType;
     private AccountUserProvider $AccountUserProvider;
 
+    /**
+     * @param AccountUserProvider $AccountUserProvider
+     */
     public function __construct(AccountUserProvider $AccountUserProvider)
     {
         $this->AccountUserProvider = $AccountUserProvider;
     }
 
     /**
-     * @return AccountUserProvider
+     * @return AccountUserProvider|null
      */
-    public function getAccountUserProvider(): AccountUserProvider
+    public function getAccountUserProvider(): ?AccountUserProvider
     {
         return $this->AccountUserProvider;
     }

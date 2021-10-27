@@ -116,10 +116,8 @@ class AccountUserProvider implements UserProviderInterface
         ]);
         if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
 
-        $refreshToken = $this->createRefreshToken($account);
-        if (!$refreshToken instanceof OAuth2RefreshToken) {
-            throw new Exception("Refresh token error", Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $refreshToken = $this->createRefreshToken($account, $request);
+        if (!$refreshToken instanceof OAuth2RefreshToken) AbstractController::errorInternalServerResponse(OAuth2RefreshToken::class);
 
         return $this->createAccessToken($request, $refreshToken, $account);
     }
@@ -132,7 +130,7 @@ class AccountUserProvider implements UserProviderInterface
      * @param Account $account
      * @return OAuth2RefreshToken
      */
-    public function createRefreshToken(Account $account): OAuth2RefreshToken
+    public function createRefreshToken(Account $account, Request $request): OAuth2RefreshToken
     {
         $em = $this->getEntityManager();
         $repoRefreshToken = $em->getRepository(OAuth2RefreshToken::class);
@@ -140,7 +138,7 @@ class AccountUserProvider implements UserProviderInterface
             throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $refreshToken = $repoRefreshToken->getRefreshTokenByAccount($account->getId());
+        $refreshToken = $repoRefreshToken->getRefreshTokenByAccount($account->getId(), $request->getClientIp());
         if ($refreshToken) return $this->updateRefreshToken($refreshToken, $account);
 
         $refreshToken = new OAuth2RefreshToken();
@@ -164,7 +162,7 @@ class AccountUserProvider implements UserProviderInterface
         $repoAccessToken = $em->getRepository(OAuth2AccessToken::class);
         if (!$repoAccessToken instanceof OAuth2AccessTokenRepository) throw new Exception('Error Processing Repository', Response::HTTP_INTERNAL_SERVER_ERROR);
 
-        $accessToken = $repoAccessToken->getAccessToken($refreshToken->getId(), $refreshToken->getRefreshToken());
+        $accessToken = $repoAccessToken->getAccessToken($refreshToken->getId(), $refreshToken->getRefreshToken(), $request->getClientIp());
         if ($accessToken) return $this->updateAccessToken($request, $accessToken, $account);
 
         $accessToken = new OAuth2AccessToken();

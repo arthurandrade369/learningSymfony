@@ -23,7 +23,7 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
         parent::__construct($registry, OAuth2RefreshToken::class);
     }
 
-    public function getRefreshTokenByAccount(int $accountId)
+    public function getRefreshTokenByAccount(int $accountId, $address)
     {
         try {
             $em = $this->getEntityManager();
@@ -35,10 +35,12 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
                 FROM
                     oauth2_refresh_token AS ort
                     INNER JOIN accounts AS a ON ort.account_id = :accountId
+                    INNER JOIN oauth2_access_token AS oat ON oat.address = :address
                 LIMIT 1';
 
             $query = $em->createNativeQuery($sql, $rsm);
             $query->setParameter('accountId', $accountId);
+            $query->setParameter('address', $address);
 
             return $query->getOneOrNullResult();
         } catch (NonUniqueResultException $exception) {
@@ -46,6 +48,20 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
             return null;
         }
     }
+
+    public function getRefreshTokenByAccessToken($token, $tokenId, $address)
+    {
+        try {
+            $em = $this->getEntityManager();
+
+            $rsm = new ResultSetMappingBuilder($em);
+            
+        } catch (NonUniqueResultException $exception) {
+            error_log($exception->getMessage());
+            return null;
+        }
+    }
+
     // /**
     //  * @return RefreshToken[] Returns an array of RefreshToken objects
     //  */

@@ -90,7 +90,7 @@ class AccountController extends AbstractCrudController
         if(!$repo instanceof AccountRepository) throw new Exception("Error Processing Request", 500);
         
         $account = $repo->getAccountByEmail($email);
-        if (count($account) > 0) return true;
+        if ($account) return true;
 
         return false;
     }

@@ -5,15 +5,10 @@ namespace App\Controller;
 use App\Controller\AbstractCrudController;
 use App\Entity\Publisher;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/service/v1/publisher", name="publisher_")
- */
 class PublisherController extends AbstractCrudController
 {
     /**
-     * @Route("", name="list", methods={"GET"})
      * @param Request $request
      * @return Response
      */
@@ -23,7 +18,6 @@ class PublisherController extends AbstractCrudController
     }
 
     /**
-     * @Route("/{id}", name="show", methods={"GET"})
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -34,7 +28,6 @@ class PublisherController extends AbstractCrudController
     }
 
     /**
-     * @Route("", name="create", methods={"POST"})
      * @param Request $request
      * @return Response
      */
@@ -44,7 +37,6 @@ class PublisherController extends AbstractCrudController
     }
 
     /**
-     * @Route("/{id}", name="update", methods={"PUT"})
      * @param integer $id
      * @param Request $request
      * @return Response
@@ -55,7 +47,6 @@ class PublisherController extends AbstractCrudController
     }
 
     /**
-     * @Route("/{id}", name="delete", methods={"DELETE"})
      * @param integer $id
      * @param Request $request
      * @return Response
