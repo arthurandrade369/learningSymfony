@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Controller\AbstractCrudController;
+use App\Entity\OAuth2RefreshToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Model\OAuth2Request;
@@ -17,17 +18,15 @@ class OAuth2Controller extends AbstractCrudController
     public function login(Request $request): Response
     {
         try {
-            $OAuth2Request = $this->getObjectPerRequest($request, OAuth2Request::class);
-            if (!$OAuth2Request instanceof OAuth2Request) {
-                throw new Exception("Error Processing Request", Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
+            $oauth2Request = $this->getObjectPerRequest($request, OAuth2Request::class);
+            if (!$oauth2Request instanceof OAuth2Request) AbstractController::errorInternalServerResponse(OAuth2Request::class);
 
-            switch ($OAuth2Request->getGrantType()) {
+            switch ($oauth2Request->getGrantType()) {
                 case OAuth2Request::GRANT_TYPE_PASSWORD:
-                    $oauth2Response = $this->getAccountUserProvider()->createAccessTokenByPassword($request, $OAuth2Request);
+                    $oauth2Response = $this->getAccountUserProvider()->createAccessTokenByPassword($request, $oauth2Request);
                     break;
                 case OAuth2Request::GRANT_TYPE_REFRESH_TOKEN:
-                    # code...
+                    $oauth2Response = $this->getAccountUserProvider()->createAccessTokenByRefreshToken($request, $oauth2Request);
                     break;
                 default:
                     throw new Exception("Authentication method not recognized, grant type required", Response::HTTP_BAD_REQUEST);
@@ -40,13 +39,20 @@ class OAuth2Controller extends AbstractCrudController
         }
     }
 
-    public function logout(Request $request)
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function logout(Request $request): Response
     {
         try {
-            $mToken = AbstractController::separateAuthorization($request->request->headers->get('Authorization'));
-            $token = AbstractController::separateToken($mToken);
+            $oauth2Request = $this->getObjectPerRequest($request, OAuth2Request::class);
+            if(!$oauth2Request instanceof OAuth2Request) AbstractController::errorInternalServerResponse(OAuth2Request::class);
 
-
+            $mToken = AbstractController::separateToken($oauth2Request->getRefreshToken());
+            $tokenId = $mToken[0];
+            
+            return $this->delete($tokenId, OAuth2RefreshToken::class, $request);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

@@ -159,7 +159,7 @@ class AbstractController extends BaseController
      * @param string|null $contextGroup
      * @return Response
      */
-    public function dataTableResponse(Request $request, array $data, ?string $contextGroup = null): Response
+    public function listResponse(Request $request, array $data, ?string $contextGroup = null): Response
     {
         try {
             if (!is_array($data)) {
@@ -222,8 +222,8 @@ class AbstractController extends BaseController
     }
 
     /**
-     * @param string $token
-     * @return string
+     * @param string $token The full token that comes from header
+     * @return string Return the token whitout the 'Authorization'
      */
     public static function separateAuthorization(string $token): string
     {
@@ -233,6 +233,8 @@ class AbstractController extends BaseController
     }
 
     /**
+     * Splits the token between id [0] and token [1]
+     * 
      * @param string $token
      * @return array|null
      */

@@ -13,3 +13,7 @@ App\Model\OAuth2Request:
       expose: true
       type: string
       groups: [ 'Show', 'Create' ]
+    refreshToken:
+      expose: true
+      type: string
+      groups: [ 'Show', 'Create' ]

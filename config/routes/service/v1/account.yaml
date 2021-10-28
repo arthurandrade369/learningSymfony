@@ -22,6 +22,20 @@ account_update:
   requirements:
     id: '\d+'
 
+account_update_enabled:
+  path: /service/v1/account/{id}/meta/enabled
+  controller: App\Controller\AccountController::updateEnabledAction
+  methods: PATCH
+  requirements:
+    id: '\d+'
+
+account_update_enabled_me:
+  path: /service/v1/account/meta/enabled
+  controller: App\Controller\AccountController::updateEnabledMeAction
+  methods: PATCH
+  requirements:
+    id: '\d+'
+
 account_delete:
   path: /service/v1/account/{id}
   controller: App\Controller\AccountController::deleteAction

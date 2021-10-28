@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
+use App\Model\IDateAt;
 use DateTime;
 use DateTimeInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class Account implements UserInterface
+class Account implements UserInterface, IDateAt
 {
     private int $id;
     private string $name;
@@ -15,7 +16,7 @@ class Account implements UserInterface
     private string $password;
     private ?string $plainPassword = null;
     private string $type;
-    private string $enabled;
+    private bool $enabled;
     private DateTime $createdAt;
     private Datetime $modifiedAt;
 

@@ -2,11 +2,9 @@
 
 namespace App\Repository;
 
-use App\Entity\Account;
 use App\Entity\OAuth2RefreshToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,7 +21,12 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
         parent::__construct($registry, OAuth2RefreshToken::class);
     }
 
-    public function getRefreshTokenByAccount(int $accountId, $address)
+    /**
+     * @param integer $accountId
+     * @param string $address
+     * @return mixed    
+     */
+    public function getRefreshTokenByAccount(int $accountId, string $address)
     {
         try {
             $em = $this->getEntityManager();
@@ -49,45 +52,68 @@ class OAuth2RefreshTokenRepository extends ServiceEntityRepository
         }
     }
 
-    public function getRefreshTokenByAccessToken($token, $tokenId, $address)
+    /**
+     * @param string $token
+     * @param string $tokenId
+     * @param string $address
+     * @return mixed
+     */
+    public function getRefreshTokenByAccessToken(string $token, string $tokenId, string $address)
     {
         try {
             $em = $this->getEntityManager();
-
             $rsm = new ResultSetMappingBuilder($em);
-            
+            $rsm->addRootEntityFromClassMetadata(OAuth2RefreshToken::class, 'ort');
+            $sql = '
+                SELECT
+                    ort.*
+                FROM
+                    oauth2_refresh_token AS ort
+                    INNER JOIN oauth2_access_token AS oat ON oat.id = :id AND oat.access_token = :token
+                WHERE
+                    oat.address = :address
+                LIMIT 1';
+
+            $query = $em->createNativeQuery($sql, $rsm);
+            $query->setParameter('id', $tokenId);
+            $query->setParameter('token', $token);
+            $query->setParameter('address', $address);
+
+            return $query->getOneOrNullResult();
         } catch (NonUniqueResultException $exception) {
             error_log($exception->getMessage());
             return null;
         }
     }
 
-    // /**
-    //  * @return RefreshToken[] Returns an array of RefreshToken objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param string $token
+     * @param string $tokenId
+     * @return mixed
+     */
+    public function getRefreshToken(string $token, string $tokenId)
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        try {
+            $em = $this->getEntityManager();
+            $rsm = new ResultSetMappingBuilder($em);
+            $rsm->addRootEntityFromClassMetadata(OAuth2RefreshToken::class, 'ort');
+            $sql = '
+                SELECT
+                    ort.*
+                FROM
+                    oauth2_refresh_token AS ort
+                WHERE
+                    ort.id = :id AND ort.refresh_token = :token
+                LIMIT 1';
 
-    /*
-    public function findOneBySomeField($value): ?RefreshToken
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            $query = $em->createNativeQuery($sql, $rsm);
+            $query->setParameter('id', $tokenId);
+            $query->setParameter('token', $token);
+
+            return $query->getOneOrNullResult();
+        } catch (NonUniqueResultException $exception) {
+            error_log($exception->getMessage());
+            return null;
+        }
     }
-    */
 }

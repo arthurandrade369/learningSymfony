@@ -13,6 +13,10 @@ App\Entity\Account:
       expose: true
       type: string
       groups: [ 'Show', 'List', 'Create' ]
+    scope:
+      expose: true
+      type: string
+      groups: [ 'Show', 'List', 'Create' ]
     password:
       expose: true
       type: string
@@ -20,14 +24,14 @@ App\Entity\Account:
       expose: true
       type: string
       groups: [ 'Create' ]
-    scope:
-      expose: true
-      type: string
-      groups: [ 'Show', 'List', 'Create' ]
     type:
       expose: true
       type: string
       groups: [ 'Show', 'List', 'Create' ]
+    enabled:
+      expose: true
+      type: boolean
+      groups: [ 'Show', 'List' ]
     createdAt:
       expose: true
       type: datetimeinterface

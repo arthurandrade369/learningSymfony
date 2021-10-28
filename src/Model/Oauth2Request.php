@@ -10,6 +10,7 @@ class OAuth2Request
     private string $username;
     private string $password;
     private string $grantType;
+    private string $refreshToken;
 
     /**
      * @return string|null
@@ -64,6 +65,25 @@ class OAuth2Request
     public function setGrantType(string $grantType): self
     {
         $this->grantType = $grantType;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+
+    /**
+     * @param string $refreshToken
+     * @return self
+     */
+    public function setRefreshToken(string $refreshToken): self
+    {
+        $this->refreshToken = $refreshToken;
 
         return $this;
     }

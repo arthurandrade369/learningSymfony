@@ -40,7 +40,7 @@ class TokenAuthenticatorSecurity extends AbstractGuardAuthenticator
      */
     public static function getAuthorizedIp(): array
     {
-        return ['sim'];
+        return [];
     }
 
     /**

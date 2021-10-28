@@ -20,7 +20,7 @@ class AbstractCrudController extends AbstractController
         try {
             $data = $this->getDoctrine()->getRepository($entity)->findAll();
 
-            return $this->dataTableResponse($request, $data);
+            return $this->listResponse($request, $data);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
@@ -138,7 +138,7 @@ class AbstractCrudController extends AbstractController
             $em->remove($data);
             $em->flush();
 
-            return new Response(null, Response::HTTP_NO_CONTENT);
+            return new Response(null, Response::HTTP_OK);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }

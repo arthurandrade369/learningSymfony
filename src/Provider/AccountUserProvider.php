@@ -79,20 +79,16 @@ class AccountUserProvider implements UserProviderInterface
             throw new UnsupportedUserException(sprintf('Invalid user class "%s".', get_class($user)));
         }
 
-        throw new Exception('TODO: fill in refreshUser() inside ' . __FILE__);
+        return $this->loadUserByUsername($user->getUsername());
     }
 
     /**
-     * @param [type] $class
-     * @return void
+     * @param $class
+     * @return boolean
      */
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
         return Account::class === $class || is_subclass_of($class, Account::class);
-    }
-
-    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
-    {
     }
 
     /**
@@ -115,6 +111,7 @@ class AccountUserProvider implements UserProviderInterface
             'password' => md5($OAuth2Request->getPassword())
         ]);
         if (!$account instanceof Account) AbstractController::errorInternalServerResponse(Account::class);
+        if (!$account->getEnabled()) throw new Exception('Trying to access a disabled account', Response::HTTP_BAD_REQUEST);
 
         $refreshToken = $this->createRefreshToken($account, $request);
         if (!$refreshToken instanceof OAuth2RefreshToken) AbstractController::errorInternalServerResponse(OAuth2RefreshToken::class);
@@ -122,8 +119,36 @@ class AccountUserProvider implements UserProviderInterface
         return $this->createAccessToken($request, $refreshToken, $account);
     }
 
-    public function createAccessTokenByRefreshToken(Request $request, OAuth2Request $oauth2Request)
+    /**
+     * @param Request $request
+     * @param OAuth2Request $oauth2Request
+     * @return OAuth2Response
+     */
+    public function createAccessTokenByRefreshToken(Request $request, OAuth2Request $oauth2Request): OAuth2Response
     {
+        $mToken = explode('_', $oauth2Request->getRefreshToken(), 2);
+        $tokenId = $mToken[0] ?? null;
+        $token = $mToken[1] ?? null;
+
+        $em = $this->getEntityManager();
+        $repoRefreshToken = $em->getRepository(OAuth2RefreshToken::class);
+        if (!$repoRefreshToken instanceof OAuth2RefreshTokenRepository) AbstractController::errorInternalServerResponse(OAuth2RefreshTokenRepository::class);
+
+        $refreshToken = $repoRefreshToken->getRefreshToken($token, $tokenId);
+
+        if ($refreshToken) {
+            $refreshToken = $this->updateRefreshToken($refreshToken, $refreshToken->getAccount());
+        }
+
+        if (!$refreshToken) {
+            throw new Exception("Refresh Token Invalid", Response::HTTP_UNAUTHORIZED);
+        }
+
+        if (!$refreshToken instanceof OAuth2RefreshToken) {
+            AbstractController::errorInternalServerResponse(OAuth2RefreshToken::class);
+        }
+
+        return $this->createAccessToken($request, $refreshToken, $refreshToken->getAccount());
     }
 
     /**
@@ -153,7 +178,8 @@ class AccountUserProvider implements UserProviderInterface
     /**
      * @param Request $request
      * @param OAuth2RefreshToken $refreshToken
-     * @return void
+     * @param Account $account
+     * @return OAuth2Response
      */
     public function createAccessToken(Request $request, OAuth2RefreshToken $refreshToken, Account $account): OAuth2Response
     {
@@ -220,6 +246,12 @@ class AccountUserProvider implements UserProviderInterface
         return $refreshToken;
     }
 
+    /**
+     * @param Request $request
+     * @param OAuth2AccessToken $accessToken
+     * @param Account $account
+     * @return OAuth2Response
+     */
     public function updateAccessToken(Request $request, OAuth2AccessToken $accessToken, Account $account): OAuth2Response
     {
         $em = $this->getEntityManager();

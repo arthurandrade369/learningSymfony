@@ -2,29 +2,29 @@
 
 namespace App\Model;
 
-use DateTime;
+use DateTimeInterface;
 
 interface IDateAt
 {
     /**
-     * @return DateTime|null
+     * @return DateTimeInterface|null
      */
-    public function getCreatedAt(): ?DateTime;
+    public function getCreatedAt(): ?DateTimeInterface;
 
     /**
-     * @param DateTime $createdAt
+     * @param DateTimeInterface $createdAt
      * @return $this
      */
-    public function setCreatedAt(DateTime $createdAt): self;
+    public function setCreatedAt(DateTimeInterface $createdAt): self;
 
     /**
-     * @return DateTime|null
+     * @return DateTimeInterface|null
      */
-    public function getModifiedAt(): ?DateTime;
+    public function getModifiedAt(): ?DateTimeInterface;
 
     /**
-     * @param DateTime $modifiedAt
+     * @param DateTimeInterface $modifiedAt
      * @return $this
      */
-    public function setModifiedAt(DateTime $modifiedAt): self;
+    public function setModifiedAt(DateTimeInterface $modifiedAt): self;
 }

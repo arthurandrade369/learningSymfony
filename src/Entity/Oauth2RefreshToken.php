@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use App\Entity\Account;
+use App\Model\IDateAt;
 use DateTime;
 use DateTimeInterface;
 
-class OAuth2RefreshToken
+class OAuth2RefreshToken implements IDateAt
 {
     public const TTL = 3600;
 

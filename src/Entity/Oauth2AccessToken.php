@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use App\Entity\OAuth2RefreshToken;
+use App\Model\IDateAt;
 use DateTime;
 use DateTimeInterface;
 
-class OAuth2AccessToken
+class OAuth2AccessToken implements IDateAt
 {
     private int $id;
     private string $accessToken;

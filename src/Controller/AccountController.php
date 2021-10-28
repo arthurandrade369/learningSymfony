@@ -39,13 +39,13 @@ class AccountController extends AbstractCrudController
     {
         try {
             $em = $this->getDoctrine()->getManager();
-            
+
             $account = $this->getObjectPerRequest($request, Account::class);
-            if(!$account instanceof Account){
+            if (!$account instanceof Account) {
                 AbstractController::errorInternalServerResponse(Account::class);
             }
-            
-            if (!$this->checkIsEmail($account->getEmail())) {
+
+            if (!$this->getAccount($account->getEmail())) {
                 $em->persist($account);
                 $em->flush();
             } else {
@@ -73,6 +73,36 @@ class AccountController extends AbstractCrudController
      * @param Request $request
      * @return Response
      */
+    public function updateEnabledAction(int $id, Request $request): Response
+    {
+        return $this->updateEnabled($id, Account::class, $request);
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function updateEnabledMeAction(Request $request): Response
+    {
+        try {
+            $user = $this->getUser();
+
+            $user->setEnabled(!$user->getEnabled());
+
+            $em = $this->getDoctrine()->getManager();
+            $em->flush($user);
+
+            return new Response(null, Response::HTTP_ACCEPTED);
+        } catch (Exception $exception) {
+            return $this->exceptionResponse($request, $exception);
+        }
+    }
+
+    /**
+     * @param integer $id
+     * @param Request $request
+     * @return Response
+     */
     public function deleteAction(int $id, Request $request): Response
     {
         return $this->delete($id, Account::class, $request);
@@ -80,18 +110,15 @@ class AccountController extends AbstractCrudController
 
     /**
      * @param string $email
-     * @return boolean
+     * @return mixed
      */
-    public function checkIsEmail(string $email): bool
+    public function getAccount(string $email)
     {
         $em = $this->getDoctrine()->getManager();
 
         $repo = $em->getRepository(Account::class);
-        if(!$repo instanceof AccountRepository) throw new Exception("Error Processing Request", 500);
-        
-        $account = $repo->getAccountByEmail($email);
-        if ($account) return true;
+        if (!$repo instanceof AccountRepository) AbstractController::errorInternalServerResponse(AccountRepository::class);
 
-        return false;
+        return $repo->getAccountByEmail($email);
     }
 }
