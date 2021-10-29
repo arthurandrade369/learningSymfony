@@ -16,7 +16,7 @@ App\Entity\Account:
     scope:
       expose: true
       type: string
-      groups: [ 'Show', 'List', 'Create' ]
+      groups: [ 'Create' ]
     password:
       expose: true
       type: string

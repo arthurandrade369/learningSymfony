@@ -7,6 +7,7 @@ use App\Entity\OAuth2RefreshToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Model\OAuth2Request;
+use App\Repository\OAuth2RefreshTokenRepository;
 use Exception;
 
 class OAuth2Controller extends AbstractCrudController
@@ -46,13 +47,15 @@ class OAuth2Controller extends AbstractCrudController
     public function logout(Request $request): Response
     {
         try {
-            $oauth2Request = $this->getObjectPerRequest($request, OAuth2Request::class);
-            if(!$oauth2Request instanceof OAuth2Request) AbstractController::errorInternalServerResponse(OAuth2Request::class);
-
-            $mToken = AbstractController::separateToken($oauth2Request->getRefreshToken());
-            $tokenId = $mToken[0];
+            $user = $this->getUser();
+            $em = $this->getDoctrine()->getManager();
             
-            return $this->delete($tokenId, OAuth2RefreshToken::class, $request);
+            $repoRefreshToken = $em->getRepository(OAuth2RefreshToken::class);
+            if (!$repoRefreshToken instanceof OAuth2RefreshTokenRepository) AbstractController::errorInternalServerResponse(OAuth2RefreshTokenRepository::class);
+
+            $refreshToken = $repoRefreshToken->getRefreshTokenByAccount($user->getId(), $request->getClientIp());
+
+            return $this->delete($refreshToken->getId(), OAuth2RefreshToken::class, $request);
         } catch (Exception $exception) {
             return $this->exceptionResponse($request, $exception);
         }
